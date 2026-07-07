@@ -29,7 +29,7 @@
       margin: 0;
       min-height: 100vh;
       background:
-        radial-gradient(circle at 0 0, rgba(221, 77, 92, .10), transparent 30rem),
+        linear-gradient(115deg, rgba(255, 247, 237, .86) 0 42%, rgba(241, 248, 246, .88) 42% 70%, rgba(255, 244, 245, .72) 70%),
         linear-gradient(135deg, #fbf7f0 0%, #f4f0eb 42%, #eef4f1 100%);
       color: var(--ink);
       font: 16px/1.62 -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
@@ -53,7 +53,7 @@
     .hero {
       position: relative;
       display: grid;
-      grid-template-columns: minmax(0, 1.25fr) minmax(280px, .75fr);
+      grid-template-columns: minmax(0, 1.18fr) minmax(360px, .82fr);
       gap: 22px;
       align-items: stretch;
       min-height: 308px;
@@ -148,90 +148,157 @@
       padding: 22px;
       border: 1px solid rgba(172, 139, 104, .24);
       border-radius: var(--radius);
-      background: #202027;
+      background:
+        linear-gradient(135deg, rgba(32, 32, 39, .96), rgba(39, 61, 55, .96)),
+        #202027;
       box-shadow: var(--shadow);
       color: #fffdf9;
     }
 
-    .phone {
+    .hero-art {
+      position: relative;
+      height: 100%;
+      min-height: 396px;
+      isolation: isolate;
+    }
+
+    .hero-art::before {
+      content: "";
       position: absolute;
-      inset: 22px 22px 22px auto;
-      width: min(228px, calc(100% - 44px));
-      border: 10px solid #111116;
-      border-radius: 30px;
-      background: #fffdf9;
-      box-shadow: 0 28px 60px rgba(0, 0, 0, .24);
-      color: var(--ink);
+      inset: 18px 20px auto auto;
+      width: 188px;
+      height: 188px;
+      border-radius: 999px;
+      background: rgba(255, 253, 249, .12);
+      filter: blur(2px);
     }
 
-    .phone-top {
-      height: 44%;
-      padding: 16px;
+    .art-card {
+      position: absolute;
+      border: 1px solid rgba(255, 253, 249, .18);
+      border-radius: var(--radius);
+      background: rgba(255, 253, 249, .09);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 24px 54px rgba(0, 0, 0, .22);
+    }
+
+    .art-card.large {
+      left: 22px;
+      right: 78px;
+      top: 26px;
+      height: 218px;
       background:
-        linear-gradient(145deg, rgba(221, 77, 92, .20), rgba(65, 108, 159, .12)),
-        repeating-linear-gradient(90deg, rgba(255, 255, 255, .34) 0 4px, transparent 4px 14px);
-      border-radius: 20px 20px 0 0;
+        linear-gradient(135deg, rgba(255, 253, 249, .18), rgba(255, 253, 249, .05)),
+        linear-gradient(120deg, rgba(255, 138, 162, .34), rgba(117, 185, 158, .26));
     }
 
-    .luggage {
-      width: 72px;
-      height: 112px;
-      margin: 6px auto 0;
-      border: 3px solid rgba(32, 32, 39, .78);
-      border-radius: 16px;
-      background: linear-gradient(90deg, #f48a9a, #ffd1d8);
-      box-shadow: inset 12px 0 rgba(255,255,255,.28), inset -12px 0 rgba(120, 53, 65, .12);
+    .art-card.small {
+      right: 26px;
+      bottom: 34px;
+      width: 178px;
+      height: 128px;
+      background:
+        linear-gradient(135deg, rgba(255, 217, 165, .26), rgba(255, 253, 249, .08));
     }
 
-    .phone-body {
-      padding: 14px;
+    .art-card.strip {
+      left: 38px;
+      bottom: 46px;
+      width: 176px;
+      height: 82px;
+      background:
+        linear-gradient(90deg, #ff8aa2 0 28%, #ffd9a5 28% 56%, #75b99e 56% 78%, #8ab1e6 78%);
     }
 
-    .fake-title,
-    .fake-line {
-      display: block;
-      height: 10px;
-      border-radius: 99px;
-      background: #ebe2d9;
-      margin-bottom: 9px;
+    .art-suitcase {
+      position: absolute;
+      left: 50%;
+      top: 52px;
+      width: 132px;
+      height: 184px;
+      border: 4px solid rgba(32, 32, 39, .64);
+      border-radius: 28px;
+      background:
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, .28) 0 7px, transparent 7px 20px),
+        linear-gradient(145deg, #ff88a0, #ffd7a1 52%, #6fba9d);
+      box-shadow:
+        inset 20px 0 rgba(255, 255, 255, .20),
+        inset -18px 0 rgba(32, 32, 39, .08),
+        0 30px 60px rgba(0, 0, 0, .30);
+      transform: translateX(-50%) rotate(-4deg);
+      z-index: 2;
     }
 
-    .fake-title {
-      width: 88%;
-      height: 14px;
-      background: #dd4d5c;
+    .art-suitcase::before {
+      content: "";
+      position: absolute;
+      left: 34px;
+      top: -32px;
+      width: 56px;
+      height: 30px;
+      border: 5px solid rgba(255, 253, 249, .78);
+      border-bottom: 0;
+      border-radius: 18px 18px 0 0;
     }
 
-    .fake-line:nth-child(2) { width: 72%; }
-    .fake-line:nth-child(3) { width: 94%; }
-    .fake-line:nth-child(4) { width: 54%; }
-
-    .floating-note {
+    .art-suitcase::after {
+      content: "";
       position: absolute;
       left: 22px;
-      bottom: 24px;
-      width: 184px;
-      padding: 14px;
-      border: 1px solid rgba(255,255,255,.18);
-      border-radius: var(--radius);
-      background: rgba(255, 253, 249, .11);
-      backdrop-filter: blur(10px);
+      right: 22px;
+      bottom: -15px;
+      height: 14px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, .28);
+      filter: blur(1px);
     }
 
-    .floating-note strong {
-      display: block;
-      margin-bottom: 4px;
-      font-size: 18px;
+    .art-line {
+      position: absolute;
+      height: 2px;
+      border-radius: 999px;
+      background: rgba(255, 253, 249, .26);
     }
 
-    .floating-note span {
-      color: rgba(255, 253, 249, .74);
-      font-size: 13px;
+    .art-line.one {
+      left: 42px;
+      right: 62px;
+      top: 278px;
+    }
+
+    .art-line.two {
+      left: 116px;
+      right: 42px;
+      top: 294px;
+    }
+
+    .art-dot {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      background: #fffdf9;
+      opacity: .72;
+    }
+
+    .art-dot.one {
+      left: 42px;
+      top: 34px;
+    }
+
+    .art-dot.two {
+      right: 58px;
+      top: 242px;
+    }
+
+    .art-dot.three {
+      left: 236px;
+      bottom: 42px;
     }
 
     .global-strip {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-columns: 1.1fr 1fr;
       gap: 12px;
       margin-bottom: 18px;
     }
@@ -674,9 +741,8 @@
         min-height: 230px;
       }
 
-      .phone {
-        right: 24px;
-        width: 200px;
+      .hero-art {
+        min-height: 278px;
       }
     }
 
@@ -715,8 +781,37 @@
         flex: 1;
       }
 
-      .floating-note {
-        width: 150px;
+      .visual-panel {
+        min-height: 280px;
+      }
+
+      .hero-art {
+        min-height: 238px;
+      }
+
+      .art-card.large {
+        left: 12px;
+        right: 46px;
+        top: 18px;
+        height: 156px;
+      }
+
+      .art-card.strip {
+        left: 24px;
+        bottom: 28px;
+      }
+
+      .art-card.small {
+        right: 16px;
+        bottom: 24px;
+        width: 138px;
+        height: 92px;
+      }
+
+      .art-suitcase {
+        top: 42px;
+        width: 104px;
+        height: 142px;
       }
     }
   </style>
@@ -730,23 +825,21 @@
         <p class="lead">选择笔记类型后，团队可以直接查看对应的内容优化点、合作避雷点和发布前确认项。重点围绕行李箱的颜值、出片、容量、场景真实感和光线质感。</p>
         <div class="hero-metrics" aria-label="清单概览">
           <div class="metric"><strong>7</strong><span>种笔记类型</span></div>
-          <div class="metric"><strong>44</strong><span>条优化经验</span></div>
+          <div class="metric"><strong>51</strong><span>条优化经验</span></div>
           <div class="metric"><strong>22</strong><span>条避雷提醒</span></div>
         </div>
       </div>
       <div class="visual-panel" aria-hidden="true">
-        <div class="phone">
-          <div class="phone-top"><div class="luggage"></div></div>
-          <div class="phone-body">
-            <span class="fake-title"></span>
-            <span class="fake-line"></span>
-            <span class="fake-line"></span>
-            <span class="fake-line"></span>
-          </div>
-        </div>
-        <div class="floating-note">
-          <strong>先选类型</strong>
-          <span>再看重点、避雷和发布前确认。</span>
+        <div class="hero-art">
+          <div class="art-card large"></div>
+          <div class="art-card strip"></div>
+          <div class="art-card small"></div>
+          <div class="art-suitcase"></div>
+          <div class="art-line one"></div>
+          <div class="art-line two"></div>
+          <div class="art-dot one"></div>
+          <div class="art-dot two"></div>
+          <div class="art-dot three"></div>
         </div>
       </div>
     </section>
@@ -757,12 +850,8 @@
         <p>任何类型都要保证箱子纹路清晰，避免偏暗、过曝、背光和明显色差。</p>
       </article>
       <article class="global-card">
-        <strong>开头先抓人</strong>
-        <p>视频前 3-5 秒尽量抛出痛点，并交代人群、地域、用途或选购场景。</p>
-      </article>
-      <article class="global-card">
         <strong>关键词要自然埋入</strong>
-        <p>标题、封面、正文和花字围绕颜值、出片、巨能装、DTA、行李箱等核心词。</p>
+        <p>标题、封面、正文和花字围绕出片、大容量、DTA 行李箱、DTA 腰果箱、旅行、高颜值、巨能装等核心词。</p>
       </article>
     </section>
 
@@ -841,6 +930,7 @@
           "画面要有音效、有配音、有对比性。",
           "口播讲解的语气要自然，不要生硬。",
           "开头前 3-5 秒抛出行李箱选购痛点，例如：避雷美铝行李箱、不会选行李箱的看过来。",
+          "开头前 5 秒必须要有多个箱子的画面展示。",
           "标题和文案要有行李箱测评相关关键词，要有钩子和利他性。",
           "封面直接模仿爆文笔记，痛点要非常明确并有利他性，例如：行李箱测评、行李箱选购、行李箱到底要怎么选。",
           "尽量加入出行场景，让测评更真实。"
@@ -851,6 +941,7 @@
           "标题是否包含行李箱测评、行李箱选购等搜索词。",
           "内容是否有真实对比，而不是单品硬夸。",
           "前 5 秒是否讲出不会选、怕踩雷等痛点。",
+          "横测前 5 秒是否出现多箱子的画面展示。",
           "是否有音效、配音和清楚的对比画面。"
         ]
       },
@@ -860,11 +951,12 @@
         sub: "用同色系穿搭和出行道具放大箱子的颜值，画面必须干净、明亮、纹路清楚。",
         icon: "图",
         fit: "多巴胺穿搭、旅行穿搭、机场高铁出行图文。",
-        tags: ["同色系", "多巴胺", "出行场景", "箱子纹路", "身高适配"],
+        tags: ["同色系", "大容量", "出行场景", "箱子纹路", "身高适配"],
         optimize: [
           "行李箱要做同色系搭配，画面可以更偏多巴胺，适配我们的行李箱。",
           "要有出行场景，以及出行相关道具。",
           "标题和文案要围绕出行相关内容，并埋入关键词，重点围绕行李箱颜值。",
+          "关键词包括：出片、大容量、dta 行李箱、dta 腰果箱、旅行、高颜值、巨能装等。",
           "光线非常重要，箱子纹路要清晰。",
           "达人身高要跟箱子尺寸适配。"
         ],
@@ -878,7 +970,7 @@
           "是否有明确出行场景或道具。",
           "箱子纹路和质感是否清晰。",
           "达人身高和箱子尺寸是否协调。",
-          "标题文案是否有出行和颜值相关关键词。"
+          "标题文案是否包含出片、大容量、dta 行李箱、dta 腰果箱、旅行、高颜值、巨能装等关键词。"
         ]
       },
       {
@@ -887,13 +979,14 @@
         sub: "适合风格强、节奏好的账号，重点是颜色统一、场景真实、卡点不抢箱子。",
         icon: "卡",
         fit: "主页风格偏多巴胺的达人，适合芭比粉、荧光绿等高饱和颜色。",
-        tags: ["高铁机场", "同色花字", "颜值出片", "DTA关键词", "尺寸适配"],
+        tags: ["高铁机场", "同色花字", "大容量", "DTA关键词", "尺寸适配"],
         optimize: [
           "达人身高要跟箱子尺寸适配。",
           "要有出行场景，例如高铁、机场、国外等。",
           "视频花字、穿搭尽量跟行李箱做同色系搭配。",
           "光线非常重要，箱子纹路要清晰。",
-          "标题和文案要埋入核心关键词和卖点：颜值、出片、DTA、行李箱。",
+          "标题和文案要埋入核心关键词和卖点。",
+          "关键词包括：出片、大容量、dta 行李箱、dta 腰果箱、颜值、旅行、高颜值、巨能装等。",
           "主页风格偏多巴胺的达人，适合比较艳的芭比粉、荧光绿等颜色。"
         ],
         avoid: [
@@ -905,7 +998,7 @@
           "达人身高和箱子尺寸是否适配。",
           "视频是否出现高铁、机场、国外等出行场景。",
           "花字、穿搭、箱子颜色是否统一。",
-          "标题文案是否包含颜值、出片、DTA、行李箱。",
+          "标题文案是否包含出片、大容量、dta 行李箱、dta 腰果箱、颜值、旅行、高颜值、巨能装等关键词。",
           "卡点节奏是否好看，但不会盖过箱子。"
         ]
       },
@@ -918,10 +1011,10 @@
         tags: ["人群地域用途", "高级花字", "白噪音", "同色收纳", "爆款BGM"],
         optimize: [
           "封面、正文、视频内容要注明人群、地域、用途。",
-          "封面要拍出行李箱质感，摆放物品不要太杂，收纳物品尽量同色系。",
+          "封面要拍出行李箱质感，摆放物品不要太杂，也不要太少或太稀疏，收纳物品尽量同色系。",
           "地域不能太小众，要选择更容易出圈的地名。",
-          "用途要符合行李箱的尺寸大小。",
-          "宠物或追星人群，封面要有对应元素出现。",
+          "用途要符合行李箱的尺寸大小，例如大尺寸箱子要对应 7 天 6 晚或 10 天 9 晚。",
+          "宠物或追星人群，封面要有对应的宠物或周边出现。",
           "视频花字要埋核心卖点：颜值、出片，花字选择尽量高级，不要太 low。",
           "中间收纳的物品最好同色系，且与目标人群适配，最好收纳出行相关物品。",
           "要有白噪音，节奏要紧凑，收纳过程尽量不要有多余动作。",
@@ -931,7 +1024,7 @@
         avoid: [
           "粉丝层级不要找太低。",
           "主页家居光线不好的不要合作。",
-          "账号主页偏 plog 风格，评论区有互暖行为的不合作。",
+          "账号主页偏 plog 风格、全是收纳/清洁/补货、颜色比较多比较杂，或评论区有互暖行为的不要合作；除非点赞平均 500+。",
           "封面以及内容花字不要太花里胡哨，尽量简约高级。",
           "封面的行李箱不要平铺拍摄，收纳袋以及物品摆放也不要太杂乱。",
           "封面其他物品不能太抢眼，不能盖过行李箱本身。",
@@ -940,7 +1033,8 @@
         ],
         checks: [
           "封面是否明确人群、地域、用途。",
-          "封面是否拍出行李箱质感，而不是被杂物盖住。",
+          "封面是否拍出行李箱质感，物品既不杂乱也不稀疏。",
+          "用途是否匹配箱子尺寸，例如大尺寸对应 7 天 6 晚或 10 天 9 晚。",
           "收纳物品是否同色系，并匹配目标人群。",
           "是否有白噪音和合适的收纳 BGM。",
           "花字是否简约高级，并埋入颜值、出片卖点。"

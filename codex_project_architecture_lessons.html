@@ -1,0 +1,731 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>从一锅粥到协作操作系统：一个 Codex 复杂项目的三次架构演化</title>
+  <style>
+    :root {
+      --ink: #1f2933;
+      --muted: #617487;
+      --line: #d8e0e8;
+      --paper: #fbfcfe;
+      --panel: #ffffff;
+      --blue: #2563eb;
+      --cyan: #0891b2;
+      --green: #15803d;
+      --amber: #b45309;
+      --red: #b91c1c;
+      --slate: #40566b;
+      --shadow: 0 18px 50px rgba(31, 41, 51, 0.10);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, #f7fbff 0%, #fbfcfe 34%, #f8fafc 100%);
+      line-height: 1.65;
+    }
+
+    .page {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 44px 28px 72px;
+    }
+
+    header {
+      padding: 34px 0 28px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      margin: 0 0 14px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--cyan);
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 920px;
+      margin: 0;
+      font-size: clamp(34px, 5vw, 64px);
+      line-height: 1.04;
+      letter-spacing: 0;
+      color: #162231;
+    }
+
+    .subtitle {
+      max-width: 800px;
+      margin: 22px 0 0;
+      color: var(--muted);
+      font-size: 19px;
+    }
+
+    section {
+      margin-top: 54px;
+    }
+
+    h2 {
+      margin: 0 0 16px;
+      font-size: 30px;
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 0 0 10px;
+      font-size: 20px;
+      line-height: 1.25;
+    }
+
+    p { margin: 0 0 14px; }
+
+    .lead {
+      max-width: 830px;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .big-rule {
+      margin-top: 28px;
+      padding: 24px 28px;
+      background: #102033;
+      color: #f8fbff;
+      border-left: 8px solid #22a6b3;
+      box-shadow: var(--shadow);
+    }
+
+    .big-rule strong {
+      display: block;
+      font-size: 27px;
+      line-height: 1.22;
+      letter-spacing: 0;
+    }
+
+    .big-rule span {
+      display: block;
+      margin-top: 10px;
+      color: #c9d7e4;
+    }
+
+    .grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 8px 28px rgba(31, 41, 51, 0.06);
+      padding: 22px;
+    }
+
+    .card .tag {
+      display: inline-block;
+      margin-bottom: 14px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+      background: var(--slate);
+    }
+
+    .tag.fast { background: var(--amber); }
+    .tag.safe { background: var(--green); }
+    .tag.system { background: var(--blue); }
+
+    .card ul, .doc-list ul {
+      margin: 12px 0 0;
+      padding-left: 20px;
+    }
+
+    .card li, .doc-list li {
+      margin: 7px 0;
+    }
+
+    .note {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .diagram {
+      margin: 24px 0;
+      padding: 18px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 10px 34px rgba(31, 41, 51, 0.07);
+      overflow-x: auto;
+    }
+
+    svg {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .doc-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .doc-item {
+      border-left: 5px solid var(--blue);
+    }
+
+    .doc-item:nth-child(2) { border-left-color: var(--cyan); }
+    .doc-item:nth-child(3) { border-left-color: var(--green); }
+    .doc-item:nth-child(4) { border-left-color: var(--amber); }
+    .doc-item:nth-child(5) { border-left-color: #7c3aed; }
+    .doc-item:nth-child(6) { border-left-color: var(--red); }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 0.94em;
+      color: #0f4c81;
+      background: #eef6ff;
+      padding: 2px 5px;
+      border-radius: 4px;
+    }
+
+    .matrix {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: #fff;
+      border: 1px solid var(--line);
+      box-shadow: 0 8px 28px rgba(31, 41, 51, 0.05);
+    }
+
+    .matrix th, .matrix td {
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+
+    .matrix th {
+      color: #ffffff;
+      background: #24384f;
+      font-weight: 700;
+    }
+
+    .matrix tr:last-child td { border-bottom: 0; }
+
+    .callout {
+      margin-top: 22px;
+      padding: 20px 22px;
+      border-radius: 8px;
+      border: 1px solid #b9d9ef;
+      background: #edf7ff;
+    }
+
+    .callout.warning {
+      border-color: #f5d39b;
+      background: #fff7ed;
+    }
+
+    .quote {
+      padding: 22px 24px;
+      color: #172033;
+      background: #eef6f2;
+      border-left: 7px solid var(--green);
+      font-size: 20px;
+      font-weight: 650;
+      line-height: 1.45;
+    }
+
+    .footer {
+      margin-top: 56px;
+      padding-top: 24px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 860px) {
+      .page { padding: 30px 18px 56px; }
+      .grid.three, .grid.two, .doc-list { grid-template-columns: 1fr; }
+      h1 { font-size: 38px; }
+      .subtitle { font-size: 17px; }
+      .matrix { font-size: 14px; }
+      .matrix th, .matrix td { padding: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <p class="eyebrow">Codex Complex Project Playbook</p>
+      <h1>从一锅粥到协作操作系统</h1>
+      <p class="subtitle">一个 Amazon Ads 自动优化项目踩过的三次架构坑，以及为什么现在的四角色 + 公共 MD 文档模式能让复杂项目稳住。</p>
+    </header>
+
+    <section>
+      <h2>先给朋友一句话</h2>
+      <p class="lead">这个项目真正学到的，不是“多开几个 Agent”，也不是“把流程写得更复杂”。真正的经验是：让 AI 高速循环，但必须把循环关在清晰边界里。</p>
+      <div class="big-rule">
+        <strong>Agent 按职责分工，系统按契约分层，项目记忆写进 repo。</strong>
+        <span>这句话就是三轮架构演化后留下来的核心方法论。</span>
+      </div>
+    </section>
+
+    <section>
+      <h2>三套架构的演化</h2>
+      <p class="lead">每一套架构都不是“错”，它们都解决了当时最痛的问题，也都暴露了下一层问题。</p>
+
+      <div class="grid three">
+        <article class="card">
+          <span class="tag fast">第一阶段</span>
+          <h3>自由对话：快，但会混</h3>
+          <p>你不断告诉 AI 需求，它马上改。早期推进很快，但数据读取、归因、诊断、建议和执行边界会被揉在一起。</p>
+          <ul>
+            <li>优点：启动快，反馈快。</li>
+            <li>问题：后期无法追责。</li>
+            <li>典型风险：AI 顺手把 L3 的证据连接做成 L6 的建议。</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <span class="tag safe">第二阶段</span>
+          <h3>14 个 Session：边界稳，但人很累</h3>
+          <p>L1-L7 每层一个实现对话，再配一个审计对话。系统边界保住了，但上下文被切碎，用户变成消息中转站。</p>
+          <ul>
+            <li>优点：层职责更清楚。</li>
+            <li>问题：沟通成本爆炸。</li>
+            <li>典型风险：每个 Agent 只知道局部事实，交界处反而容易出错。</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <span class="tag system">第三阶段</span>
+          <h3>四角色工作流：职责集中，契约保边界</h3>
+          <p>系统仍按 L1-L7 分层，但 Agent 改为按职责分工：实现、审计、架构、复盘。状态写进 repo 文档，不靠长对话记忆。</p>
+          <ul>
+            <li>优点：AI 能自循环，用户不用人肉路由。</li>
+            <li>问题：需要维护公共 MD 文档。</li>
+            <li>适用：长期、大型、边界敏感项目。</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <h2>图 1：为什么第一套会变成“一锅粥”</h2>
+      <p class="lead">自由对话最大的问题不是 AI 不聪明，而是它太容易把局部合理的动作串成整体混乱。</p>
+      <div class="diagram" aria-label="自由对话阶段问题示意图">
+        <svg viewBox="0 0 1040 330" role="img">
+          <defs>
+            <marker id="arrow-red" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+              <path d="M0,0 L8,3 L0,6 Z" fill="#b91c1c"></path>
+            </marker>
+          </defs>
+          <rect x="24" y="36" width="180" height="64" rx="8" fill="#fff7ed" stroke="#f0b36c"></rect>
+          <text x="114" y="74" text-anchor="middle" font-size="17" font-weight="700" fill="#7c3e0a">用户需求</text>
+
+          <rect x="292" y="24" width="456" height="110" rx="8" fill="#f8fafc" stroke="#94a3b8"></rect>
+          <text x="520" y="58" text-anchor="middle" font-size="18" font-weight="700" fill="#24384f">一个自由对话里的 AI</text>
+          <text x="520" y="90" text-anchor="middle" font-size="15" fill="#617487">读数据、改算法、补测试、改建议、改执行入口全都可能顺手做</text>
+
+          <line x1="204" y1="68" x2="292" y2="68" stroke="#b91c1c" stroke-width="3" marker-end="url(#arrow-red)"></line>
+
+          <g font-size="15" font-weight="700">
+            <rect x="54" y="210" width="110" height="54" rx="8" fill="#eef6ff" stroke="#7fb3e6"></rect>
+            <text x="109" y="243" text-anchor="middle" fill="#0f4c81">L1 raw</text>
+
+            <rect x="184" y="210" width="110" height="54" rx="8" fill="#eef6ff" stroke="#7fb3e6"></rect>
+            <text x="239" y="243" text-anchor="middle" fill="#0f4c81">L2 schema</text>
+
+            <rect x="314" y="210" width="110" height="54" rx="8" fill="#eef6ff" stroke="#7fb3e6"></rect>
+            <text x="369" y="243" text-anchor="middle" fill="#0f4c81">L3 evidence</text>
+
+            <rect x="444" y="210" width="110" height="54" rx="8" fill="#eef6ff" stroke="#7fb3e6"></rect>
+            <text x="499" y="243" text-anchor="middle" fill="#0f4c81">L4 metrics</text>
+
+            <rect x="574" y="210" width="110" height="54" rx="8" fill="#eef6ff" stroke="#7fb3e6"></rect>
+            <text x="629" y="243" text-anchor="middle" fill="#0f4c81">L5 rules</text>
+
+            <rect x="704" y="210" width="110" height="54" rx="8" fill="#eef6ff" stroke="#7fb3e6"></rect>
+            <text x="759" y="243" text-anchor="middle" fill="#0f4c81">L6 draft</text>
+
+            <rect x="834" y="210" width="110" height="54" rx="8" fill="#fff1f2" stroke="#f199a2"></rect>
+            <text x="889" y="243" text-anchor="middle" fill="#9f1239">L7 execute</text>
+          </g>
+
+          <path d="M520 134 C500 178, 230 169, 110 210" fill="none" stroke="#b91c1c" stroke-width="2.5" marker-end="url(#arrow-red)"></path>
+          <path d="M520 134 C530 176, 515 178, 499 210" fill="none" stroke="#b91c1c" stroke-width="2.5" marker-end="url(#arrow-red)"></path>
+          <path d="M520 134 C650 166, 770 172, 889 210" fill="none" stroke="#b91c1c" stroke-width="2.5" marker-end="url(#arrow-red)"></path>
+          <text x="520" y="304" text-anchor="middle" font-size="16" fill="#617487">结果：看起来全都推进了，但错了以后不知道错在哪一层。</text>
+        </svg>
+      </div>
+    </section>
+
+    <section>
+      <h2>图 2：为什么 14 个 Agent 会让用户变成人肉路由器</h2>
+      <p class="lead">第二套架构把系统边界保住了，但把对话也按层切开。每个 Session 都知道局部，没人天然拥有完整上下文。</p>
+      <div class="diagram" aria-label="十四个 Agent 沟通成本示意图">
+        <svg viewBox="0 0 1040 420" role="img">
+          <defs>
+            <marker id="arrow-slate" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+              <path d="M0,0 L8,3 L0,6 Z" fill="#40566b"></path>
+            </marker>
+          </defs>
+          <circle cx="520" cy="208" r="64" fill="#102033"></circle>
+          <text x="520" y="201" text-anchor="middle" font-size="20" font-weight="700" fill="#fff">用户</text>
+          <text x="520" y="229" text-anchor="middle" font-size="14" fill="#c9d7e4">路由/翻译/仲裁</text>
+
+          <g font-size="14" font-weight="700">
+            <rect x="64" y="40" width="130" height="42" rx="8" fill="#edf7ff" stroke="#78add8"></rect><text x="129" y="67" text-anchor="middle" fill="#0f4c81">L1 Implementer</text>
+            <rect x="64" y="96" width="130" height="42" rx="8" fill="#fff7ed" stroke="#e7b067"></rect><text x="129" y="123" text-anchor="middle" fill="#7c3e0a">L1 Auditor</text>
+            <rect x="244" y="40" width="130" height="42" rx="8" fill="#edf7ff" stroke="#78add8"></rect><text x="309" y="67" text-anchor="middle" fill="#0f4c81">L2 Implementer</text>
+            <rect x="244" y="96" width="130" height="42" rx="8" fill="#fff7ed" stroke="#e7b067"></rect><text x="309" y="123" text-anchor="middle" fill="#7c3e0a">L2 Auditor</text>
+            <rect x="424" y="40" width="130" height="42" rx="8" fill="#edf7ff" stroke="#78add8"></rect><text x="489" y="67" text-anchor="middle" fill="#0f4c81">L3 Implementer</text>
+            <rect x="424" y="96" width="130" height="42" rx="8" fill="#fff7ed" stroke="#e7b067"></rect><text x="489" y="123" text-anchor="middle" fill="#7c3e0a">L3 Auditor</text>
+            <rect x="604" y="40" width="130" height="42" rx="8" fill="#edf7ff" stroke="#78add8"></rect><text x="669" y="67" text-anchor="middle" fill="#0f4c81">L4 Implementer</text>
+            <rect x="604" y="96" width="130" height="42" rx="8" fill="#fff7ed" stroke="#e7b067"></rect><text x="669" y="123" text-anchor="middle" fill="#7c3e0a">L4 Auditor</text>
+            <rect x="784" y="40" width="130" height="42" rx="8" fill="#edf7ff" stroke="#78add8"></rect><text x="849" y="67" text-anchor="middle" fill="#0f4c81">L5 Implementer</text>
+            <rect x="784" y="96" width="130" height="42" rx="8" fill="#fff7ed" stroke="#e7b067"></rect><text x="849" y="123" text-anchor="middle" fill="#7c3e0a">L5 Auditor</text>
+            <rect x="244" y="318" width="130" height="42" rx="8" fill="#edf7ff" stroke="#78add8"></rect><text x="309" y="345" text-anchor="middle" fill="#0f4c81">L6 Implementer</text>
+            <rect x="424" y="318" width="130" height="42" rx="8" fill="#fff7ed" stroke="#e7b067"></rect><text x="489" y="345" text-anchor="middle" fill="#7c3e0a">L6 Auditor</text>
+            <rect x="604" y="318" width="130" height="42" rx="8" fill="#edf7ff" stroke="#78add8"></rect><text x="669" y="345" text-anchor="middle" fill="#0f4c81">L7 Implementer</text>
+            <rect x="784" y="318" width="130" height="42" rx="8" fill="#fff7ed" stroke="#e7b067"></rect><text x="849" y="345" text-anchor="middle" fill="#7c3e0a">L7 Auditor</text>
+          </g>
+
+          <g stroke="#40566b" stroke-width="1.8" fill="none" marker-end="url(#arrow-slate)" opacity="0.9">
+            <path d="M194 82 C300 120, 408 150, 474 190"></path>
+            <path d="M374 82 C430 114, 474 149, 502 185"></path>
+            <path d="M554 82 C548 126, 535 154, 525 184"></path>
+            <path d="M604 116 C570 148, 547 168, 532 187"></path>
+            <path d="M784 116 C684 152, 608 174, 570 198"></path>
+            <path d="M374 338 C426 307, 470 277, 500 246"></path>
+            <path d="M554 338 C544 307, 535 277, 527 248"></path>
+            <path d="M604 338 C570 304, 548 274, 533 248"></path>
+            <path d="M784 338 C682 300, 606 270, 570 230"></path>
+          </g>
+          <text x="520" y="396" text-anchor="middle" font-size="16" fill="#617487">边界被分开了，但上下文也被分开了。人的时间被消耗在转述上。</text>
+        </svg>
+      </div>
+    </section>
+
+    <section>
+      <h2>图 3：现在的四角色闭环</h2>
+      <p class="lead">现在的系统不再按 L1-L7 拆 Agent，而是按职责拆 Agent。系统边界仍在代码和文档里，协作则通过角色和 workflow 运转。</p>
+      <div class="diagram" aria-label="四角色自动协作闭环图">
+        <svg viewBox="0 0 1040 420" role="img">
+          <defs>
+            <marker id="arrow-blue" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+              <path d="M0,0 L8,3 L0,6 Z" fill="#2563eb"></path>
+            </marker>
+            <marker id="arrow-green" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+              <path d="M0,0 L8,3 L0,6 Z" fill="#15803d"></path>
+            </marker>
+          </defs>
+
+          <rect x="414" y="32" width="212" height="76" rx="8" fill="#eef6ff" stroke="#7fb3e6"></rect>
+          <text x="520" y="62" text-anchor="middle" font-size="20" font-weight="700" fill="#0f4c81">Da Vinci</text>
+          <text x="520" y="88" text-anchor="middle" font-size="14" fill="#617487">方向 / 边界 / 大任务</text>
+
+          <rect x="92" y="172" width="212" height="76" rx="8" fill="#edf7ff" stroke="#78add8"></rect>
+          <text x="198" y="202" text-anchor="middle" font-size="20" font-weight="700" fill="#0f4c81">Elon</text>
+          <text x="198" y="228" text-anchor="middle" font-size="14" fill="#617487">实现 / 检查 / handoff</text>
+
+          <rect x="736" y="172" width="212" height="76" rx="8" fill="#fff7ed" stroke="#e7b067"></rect>
+          <text x="842" y="202" text-anchor="middle" font-size="20" font-weight="700" fill="#7c3e0a">Socrates</text>
+          <text x="842" y="228" text-anchor="middle" font-size="14" fill="#617487">只读审计 / Blocking</text>
+
+          <rect x="414" y="304" width="212" height="76" rx="8" fill="#eef6f2" stroke="#7abf91"></rect>
+          <text x="520" y="334" text-anchor="middle" font-size="20" font-weight="700" fill="#126135">Feynman</text>
+          <text x="520" y="360" text-anchor="middle" font-size="14" fill="#617487">复盘 / 方法论</text>
+
+          <path d="M472 108 C382 132, 288 150, 224 172" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow-blue)"></path>
+          <text x="327" y="126" font-size="14" fill="#2563eb">用户确认后发任务</text>
+
+          <path d="M304 210 L736 210" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow-blue)"></path>
+          <text x="520" y="198" text-anchor="middle" font-size="14" fill="#2563eb">quick_audit</text>
+
+          <path d="M736 236 C600 286, 404 286, 304 236" fill="none" stroke="#b45309" stroke-width="3" marker-end="url(#arrow-blue)"></path>
+          <text x="520" y="282" text-anchor="middle" font-size="14" fill="#b45309">有 Blocking：打回 Elon</text>
+
+          <path d="M842 172 C802 86, 652 62, 626 70" fill="none" stroke="#15803d" stroke-width="3" marker-end="url(#arrow-green)"></path>
+          <text x="776" y="98" font-size="14" fill="#15803d">无 Blocking：交给 Da Vinci</text>
+
+          <line x1="520" y1="304" x2="520" y2="256" stroke="#15803d" stroke-width="2" stroke-dasharray="8 8"></line>
+          <text x="542" y="282" font-size="14" fill="#15803d">不进自动执行 loop</text>
+        </svg>
+      </div>
+    </section>
+
+    <section>
+      <h2>公共 MD 文档分别在做什么</h2>
+      <p class="lead">这些文档不是装饰。它们像项目的公共账本，让新对话、旧对话、实现者、审计者和架构者都从同一份事实出发。</p>
+
+      <div class="doc-list">
+        <article class="card doc-item">
+          <h3><code>AGENTS.md</code></h3>
+          <p>项目最高层的行为规则。写项目目标、强制边界、安全原则、跨层修改规则和禁止事项。</p>
+          <ul>
+            <li>作用：告诉所有 Agent 什么绝对不能做。</li>
+            <li>价值：防止 AI 因为“顺手”改出危险行为。</li>
+          </ul>
+        </article>
+
+        <article class="card doc-item">
+          <h3><code>docs/PROJECT_OPERATING_SYSTEM.md</code></h3>
+          <p>解释整个协作系统为什么这样组织。它定义四角色模式、硬契约与软协作的关系。</p>
+          <ul>
+            <li>作用：说明“Agent 按职责分工，系统按契约分层”。</li>
+            <li>价值：防止未来又退回一层一个 Agent 的人肉路由模式。</li>
+          </ul>
+        </article>
+
+        <article class="card doc-item">
+          <h3><code>docs/AGENT_WORKFLOW.md</code></h3>
+          <p>具体交通规则。谁能改文件、谁只读审计、Elon 怎么发 Socrates、Socrates 怎么打回或交给 Da Vinci。</p>
+          <ul>
+            <li>作用：把自动转发和 quick audit 固化下来。</li>
+            <li>价值：减少用户在多个线程之间复制粘贴。</li>
+          </ul>
+        </article>
+
+        <article class="card doc-item">
+          <h3><code>docs/CURRENT_STATE.md</code></h3>
+          <p>项目当前事实入口。记录主入口、系统边界、运行流程、配置主线、测试状态和已知风险。</p>
+          <ul>
+            <li>作用：新对话先读它，不靠旧记忆猜项目状态。</li>
+            <li>价值：线程可以重开，但项目状态不会丢。</li>
+          </ul>
+        </article>
+
+        <article class="card doc-item">
+          <h3><code>docs/ACTIVE_TASKS.md</code></h3>
+          <p>当前任务登记和 Implementer 锁。记录谁在改、目标是什么、allowed files / forbidden files 是什么。</p>
+          <ul>
+            <li>作用：防止多个 Elon 同时改同一片系统。</li>
+            <li>价值：把“能不能改这个文件”变成公开事实。</li>
+          </ul>
+        </article>
+
+        <article class="card doc-item">
+          <h3><code>docs/TASK_HANDOFF.md</code></h3>
+          <p>任务结束或中断后的交接记录。写实际修改、检查结果、未完成内容、风险和下一步建议。</p>
+          <ul>
+            <li>作用：让下一个 Agent 从交接记录接班。</li>
+            <li>价值：不再靠用户复述“刚才做到哪了”。</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <h2>图 4：这些 MD 文档如何维持契约秩序</h2>
+      <p class="lead">公共文档把“项目事实”和“协作规则”从对话里拿出来，放到所有角色都必须读取的地方。</p>
+      <div class="diagram" aria-label="公共 MD 文档维持契约秩序图">
+        <svg viewBox="0 0 1040 520" role="img">
+          <defs>
+            <marker id="arrow-doc" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+              <path d="M0,0 L8,3 L0,6 Z" fill="#40566b"></path>
+            </marker>
+          </defs>
+
+          <rect x="340" y="40" width="360" height="96" rx="8" fill="#102033"></rect>
+          <text x="520" y="80" text-anchor="middle" font-size="22" font-weight="700" fill="#fff">Repo 公共记忆层</text>
+          <text x="520" y="110" text-anchor="middle" font-size="15" fill="#c9d7e4">不是某个对话的记忆，而是所有角色共享的事实来源</text>
+
+          <g font-size="15" font-weight="700">
+            <rect x="70" y="214" width="210" height="54" rx="8" fill="#fff" stroke="#7fb3e6"></rect>
+            <text x="175" y="247" text-anchor="middle" fill="#0f4c81">AGENTS.md</text>
+
+            <rect x="310" y="184" width="210" height="54" rx="8" fill="#fff" stroke="#7fb3e6"></rect>
+            <text x="415" y="217" text-anchor="middle" fill="#0f4c81">CURRENT_STATE.md</text>
+
+            <rect x="550" y="184" width="210" height="54" rx="8" fill="#fff" stroke="#7fb3e6"></rect>
+            <text x="655" y="217" text-anchor="middle" fill="#0f4c81">ACTIVE_TASKS.md</text>
+
+            <rect x="790" y="214" width="210" height="54" rx="8" fill="#fff" stroke="#7fb3e6"></rect>
+            <text x="895" y="247" text-anchor="middle" fill="#0f4c81">TASK_HANDOFF.md</text>
+
+            <rect x="194" y="326" width="250" height="54" rx="8" fill="#fff" stroke="#7fb3e6"></rect>
+            <text x="319" y="359" text-anchor="middle" fill="#0f4c81">PROJECT_OPERATING_SYSTEM.md</text>
+
+            <rect x="596" y="326" width="250" height="54" rx="8" fill="#fff" stroke="#7fb3e6"></rect>
+            <text x="721" y="359" text-anchor="middle" fill="#0f4c81">AGENT_WORKFLOW.md</text>
+          </g>
+
+          <g stroke="#40566b" stroke-width="2" fill="none" marker-end="url(#arrow-doc)">
+            <path d="M430 136 L200 214"></path>
+            <path d="M486 136 L426 184"></path>
+            <path d="M554 136 L638 184"></path>
+            <path d="M618 136 L860 214"></path>
+            <path d="M456 136 C360 220, 318 270, 318 326"></path>
+            <path d="M592 136 C698 222, 724 270, 724 326"></path>
+          </g>
+
+          <rect x="92" y="440" width="248" height="52" rx="8" fill="#edf7ff" stroke="#78add8"></rect>
+          <text x="216" y="472" text-anchor="middle" font-size="17" font-weight="700" fill="#0f4c81">新 Elon 先读文档</text>
+
+          <rect x="396" y="440" width="248" height="52" rx="8" fill="#fff7ed" stroke="#e7b067"></rect>
+          <text x="520" y="472" text-anchor="middle" font-size="17" font-weight="700" fill="#7c3e0a">Socrates 以文档为证据</text>
+
+          <rect x="700" y="440" width="248" height="52" rx="8" fill="#eef6ff" stroke="#7fb3e6"></rect>
+          <text x="824" y="472" text-anchor="middle" font-size="17" font-weight="700" fill="#0f4c81">Da Vinci 按文档定方向</text>
+        </svg>
+      </div>
+    </section>
+
+    <section>
+      <h2>为什么现在这套是当前项目的“最优”</h2>
+      <p class="lead">它不是所有项目的宇宙最优，而是这种长期、复杂、边界敏感项目的局部最优。</p>
+
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th>问题</th>
+            <th>旧架构怎么失败</th>
+            <th>现在怎么解决</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>AI 把系统改成一锅粥</td>
+            <td>自由对话里，AI 会自然跨层“顺手做”。</td>
+            <td>L1-L7 边界写进契约、schema、测试、allowed files / forbidden files。</td>
+          </tr>
+          <tr>
+            <td>用户变成人肉路由器</td>
+            <td>14 个 Session 需要用户手工转述。</td>
+            <td>Elon、Socrates、Da Vinci 通过 workflow 自动转发。</td>
+          </tr>
+          <tr>
+            <td>长对话污染判断</td>
+            <td>旧对话记忆越长，越容易引用过时事实。</td>
+            <td>新任务必须先读 <code>CURRENT_STATE</code> 和 <code>ACTIVE_TASKS</code>。</td>
+          </tr>
+          <tr>
+            <td>实现范围失控</td>
+            <td>AI 看到旁边有问题就顺手修。</td>
+            <td>每个实现任务先登记 allowed files / forbidden files。</td>
+          </tr>
+          <tr>
+            <td>审计变成空泛意见</td>
+            <td>审计容易变成风格建议或事后背书。</td>
+            <td>Socrates 必须独立读 diff、契约、测试结果，并区分 Blocking / Non-blocking。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout">
+        <strong>关键理解：</strong>现在这套架构不是为了让流程看起来专业，而是为了让“谁能改什么、错了找哪层、下一步由谁判断”都变成公开事实。
+      </div>
+    </section>
+
+    <section>
+      <h2>这套系统如何稳步运行</h2>
+      <div class="grid two">
+        <article class="card">
+          <h3>1. 任务开始：先看公共事实</h3>
+          <p>任何新任务都先读 <code>AGENTS.md</code>、<code>CURRENT_STATE.md</code>、<code>ACTIVE_TASKS.md</code>、<code>AGENT_WORKFLOW.md</code>。</p>
+          <p class="note">这一步防止新线程靠旧印象工作。</p>
+        </article>
+
+        <article class="card">
+          <h3>2. 实现前：锁定范围</h3>
+          <p>Elon 在 <code>ACTIVE_TASKS.md</code> 登记目标、责任层、allowed files、forbidden files、预期检查。</p>
+          <p class="note">这一步防止“顺手改上游、顺手改下游”。</p>
+        </article>
+
+        <article class="card">
+          <h3>3. 实现后：留下交接</h3>
+          <p>Elon 在 <code>TASK_HANDOFF.md</code> 写实际修改、检查结果、未完成内容、风险和下一步。</p>
+          <p class="note">这一步让换线程不等于丢上下文。</p>
+        </article>
+
+        <article class="card">
+          <h3>4. 审计时：按证据判断</h3>
+          <p>Socrates 不以 Elon 总结为事实，而是独立读项目状态、契约、diff、测试结果。</p>
+          <p class="note">这一步防止审计变成“听实现者讲故事”。</p>
+        </article>
+
+        <article class="card">
+          <h3>5. 无 Blocking：交给架构判断</h3>
+          <p>Socrates 无 Blocking 后把摘要交给 Da Vinci。Da Vinci 判断当前任务结束、下一步主线和任务大小。</p>
+          <p class="note">这一步让实现闭环回到方向判断。</p>
+        </article>
+
+        <article class="card">
+          <h3>6. 两轮不收敛：停止互踢</h3>
+          <p>如果同一任务两轮 Blocking 仍不收敛，停止 Elon/Socrates loop，交给 Da Vinci 重拆任务。</p>
+          <p class="note">这一步防止 AI 在错误任务定义里空转。</p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <h2>给未来更大项目的优化方向</h2>
+      <div class="grid two">
+        <article class="card">
+          <h3>用 Skill 一键安装协作底盘</h3>
+          <p>不要每次手工复制四套提示词。用 <code>$project-os-bootstrap</code> 初始化四角色 workflow 和公共 MD 文档。</p>
+        </article>
+        <article class="card">
+          <h3>Da Vinci 先做项目适配</h3>
+          <p>不要硬套 Amazon Ads 的 L1-L7。每个项目先识别自己的模块、边界、高风险区和 Blocking 标准。</p>
+        </article>
+        <article class="card">
+          <h3>任务默认大一点，必要时再拆小</h3>
+          <p>Da Vinci 应布置阶段级、可闭环的大任务，避免每个细枝末节都审计一次。只有高风险、边界不清、两轮 Blocking 不收敛时才拆小。</p>
+        </article>
+        <article class="card">
+          <h3>更大项目可以并行，但必须有文件边界</h3>
+          <p>可以多 Implementer，但必须写清每个 Implementer 的 allowed files、forbidden files 和冲突处理方式。</p>
+        </article>
+        <article class="card">
+          <h3>审计分级</h3>
+          <p>小任务 quick audit，阶段性交付 formal audit，涉及生产、客户、财务、真实执行时加强审计。</p>
+        </article>
+        <article class="card">
+          <h3>定期换线程，不丢记忆</h3>
+          <p>长对话会污染判断。线程可以换，但公共 MD 文档不能丢；新线程从 repo 重新接管。</p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <h2>可以直接讲给朋友的版本</h2>
+      <div class="quote">
+        我一开始以为用 Codex 做复杂项目，就是不断跟它讲需求，让它改。后来发现这样很快，但数据、逻辑、归因会混在一起，后面错了根本查不出错在哪。
+        <br><br>
+        然后我把系统拆成很多层，每层一个 Agent，每层一个审计。边界是保住了，但我自己变成 14 个对话之间的人肉路由器，累到不行。
+        <br><br>
+        最后我发现，正确做法不是“每层一个 Agent”，而是“系统按契约分层，Agent 按职责分工”。实现、审计、架构、复盘分开；项目记忆写进 repo；Agent 之间按 workflow 自动转发。这样 AI 可以自己形成闭环，但不会把复杂项目改成一锅粥。
+      </div>
+    </section>
+
+    <section>
+      <h2>最后的判断力</h2>
+      <p class="lead">这套架构不是为了崇拜流程。它只做一件事：让复杂项目的错误更容易被定位，让人的注意力从“转述消息”回到“判断方向”。</p>
+      <div class="callout warning">
+        <strong>什么时候不要用满配？</strong>
+        小脚本、小页面、一次性分析，不要一上来四角色全开。任务越小，流程越轻；风险越高，边界越强；上下文越长，记忆越要写进 repo。
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p>生成日期：2026-07-09。本文基于当前项目的协作治理文档、三次架构演化复盘和四角色 workflow 总结而成。</p>
+    </footer>
+  </main>
+</body>
+</html>

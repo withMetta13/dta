@@ -50,6 +50,7 @@ server {
     error_log /var/log/nginx/${NGINX_SITE_NAME}.error.log;
 
     location /api/ {
+        auth_basic off;
         proxy_pass http://127.0.0.1:8787/api/;
         proxy_http_version 1.1;
         proxy_set_header Host \$host;
@@ -82,6 +83,7 @@ location = ${PUBLIC_PATH} {
 }
 
 location ${PUBLIC_PATH}/api/ {
+        auth_basic off;
     proxy_pass http://127.0.0.1:8787/api/;
     proxy_http_version 1.1;
     proxy_set_header Host \$host;
@@ -91,6 +93,7 @@ location ${PUBLIC_PATH}/api/ {
 }
 
 location ${PUBLIC_PATH}/ {
+        auth_basic off;
     alias ${APP_DIR}/;
     index index.html;
     try_files \$uri \$uri/ ${PUBLIC_PATH}/index.html;

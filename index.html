@@ -625,6 +625,14 @@
       white-space: nowrap;
     }
 
+    .section-heading { display: flex; align-items: center; gap: 10px; }
+    .section-actions { display: flex; align-items: center; gap: 10px; }
+    .section-select-btn {
+      min-height: 30px; padding: 4px 9px; border: 1px solid #d9cfc5; border-radius: 5px;
+      background: #fff; color: #56515a; cursor: pointer; font-size: 12px; font-weight: 800;
+    }
+    .section-select-btn:hover { border-color: rgba(72, 126, 102, .55); background: #f3fbf5; color: var(--green); }
+
     .items {
       display: grid;
       gap: 0;
@@ -655,11 +663,21 @@
     }
 
     .item input:checked {
+      position: relative;
       border-color: var(--green);
-      background:
-        linear-gradient(135deg, transparent 42%, #fff 42% 58%, transparent 58%),
-        linear-gradient(45deg, transparent 50%, #fff 50% 64%, transparent 64%),
-        var(--green);
+      background: var(--green);
+    }
+
+    .item input:checked::after {
+      content: "";
+      position: absolute;
+      left: 6px;
+      top: 2px;
+      width: 5px;
+      height: 10px;
+      border: solid #fff;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
     }
 
     .item label {
@@ -855,12 +873,16 @@
     .form-intro h2 { margin: 0; font-size: 24px; }
     .form-intro p { margin: 0; color: var(--muted); font-size: 14px; }
     .field { display: grid; gap: 7px; }
-    .field label { font-size: 13px; font-weight: 800; }
+    .field label, .field-label { font-size: 13px; font-weight: 800; }
     .field input, .field select {
       width: 100%; min-height: 44px; padding: 9px 11px; border: 1px solid var(--line);
       border-radius: 6px; background: #fff; color: var(--ink); outline: none;
     }
     .field input:focus, .field select:focus { border-color: rgba(221, 77, 92, .70); box-shadow: 0 0 0 3px rgba(221, 77, 92, .11); }
+    .name-options { display: flex; flex-wrap: wrap; gap: 8px; min-height: 44px; }
+    .name-choice { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 6px; background: #fff; cursor: pointer; font-weight: 750; }
+    .name-choice:has(input:checked) { border-color: rgba(72, 126, 102, .72); background: #f3fbf5; color: var(--green); }
+    .name-choice input { width: 17px; height: 17px; accent-color: var(--green); }
     .required { color: var(--red); }
 
     .submit-panel {
@@ -878,6 +900,15 @@
     .history-head { display: flex; align-items: end; justify-content: space-between; gap: 16px; padding: 22px 24px; border-bottom: 1px solid var(--line); background: #fff9f0; }
     .history-head h2 { margin: 0; font-size: 28px; }
     .history-head p { margin: 5px 0 0; color: var(--muted); font-size: 14px; }
+    .history-tools { display: flex; align-items: center; gap: 4px; padding: 4px; border: 1px solid var(--line); border-radius: 6px; background: #fff; }
+    .history-mode-btn { min-height: 32px; padding: 5px 10px; border: 0; border-radius: 4px; background: transparent; color: var(--muted); cursor: pointer; font-size: 13px; font-weight: 800; }
+    .history-mode-btn.active { background: #f3fbf5; color: var(--green); }
+    .history-groups { display: grid; gap: 18px; padding: 18px; }
+    .history-group { display: grid; gap: 10px; }
+    .history-group-title { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 4px; }
+    .history-group-title h3 { margin: 0; font-size: 18px; }
+    .history-group-title span { color: var(--muted); font-size: 13px; }
+    .history-group-list { display: grid; gap: 12px; }
     .history-count { color: var(--muted); font-size: 13px; white-space: nowrap; }
     .history-list { display: grid; gap: 12px; padding: 18px; }
     .history-empty { padding: 44px 20px; color: var(--muted); text-align: center; }
@@ -892,14 +923,17 @@
     .history-section { overflow: hidden; border: 1px solid #eee5dc; border-radius: 6px; }
     .history-section h3 { margin: 0; padding: 10px 12px; background: #fffaf4; font-size: 14px; }
     .history-items { margin: 0; padding: 0; list-style: none; }
-    .history-item { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 9px; padding: 9px 12px; border-top: 1px solid #f2ebe4; font-size: 14px; }
+    .history-item { position: relative; display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 9px; padding: 9px 12px; border-top: 1px solid #f2ebe4; font-size: 14px; }
     .history-item::before { content: ""; width: 16px; height: 16px; margin-top: 3px; border: 2px solid #d8c7b8; border-radius: 5px; }
-    .history-item.checked::before { border-color: var(--green); background: var(--green); box-shadow: inset 0 0 0 3px #fff; }
+    .history-item.checked::before { border-color: var(--green); background: var(--green); }
+    .history-item.checked::after { content: ""; position: absolute; left: 18px; top: 13px; width: 4px; height: 8px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
     .history-item.unchecked { color: #8e5660; background: #fffafb; }
 
     @media (max-width: 760px) {
       .submission-form { grid-template-columns: 1fr; padding: 16px; }
       .form-intro, .submit-panel, .history-head { display: grid; grid-template-columns: 1fr; }
+      .history-tools { width: 100%; }
+      .history-mode-btn { flex: 1; }
       .submit-panel { margin: 0 16px 16px; }
       .submit-btn { width: 100%; }
       .history-summary { grid-template-columns: 1fr; gap: 7px; }
@@ -960,17 +994,21 @@
             <p>填写信息，逐项确认后提交。本次结果会成为团队可查看的正式记录。</p>
           </div>
         </div>
-        <div class="field">
-          <label for="submitterName">姓名 <span class="required">*</span></label>
-          <input id="submitterName" name="submitterName" type="text" maxlength="50" autocomplete="name" required placeholder="填写你的姓名">
+        <div class="field responsible-field">
+          <span class="field-label">姓名 <span class="required">*</span></span>
+          <div class="name-options" role="radiogroup" aria-label="选择姓名">
+            <label class="name-choice"><input name="submitterName" type="radio" value="小鱼" required><span>小鱼</span></label>
+            <label class="name-choice"><input name="submitterName" type="radio" value="勤天"><span>勤天</span></label>
+            <label class="name-choice"><input name="submitterName" type="radio" value="浅浅"><span>浅浅</span></label>
+          </div>
         </div>
         <div class="field">
           <label for="cooperationDate">合作日期 <span class="required">*</span></label>
           <input id="cooperationDate" name="cooperationDate" type="date" required>
         </div>
         <div class="field">
-          <label for="noteTitle">合作笔记名称 <span class="required">*</span></label>
-          <input id="noteTitle" name="noteTitle" type="text" maxlength="120" required placeholder="例如：开学旅行行李箱测评">
+          <label for="noteTitle">博主名字 <span class="required">*</span></label>
+          <input id="noteTitle" name="noteTitle" type="text" maxlength="120" required placeholder="填写合作博主的名字">
         </div>
         <div class="field">
           <label for="noteType">笔记类型 <span class="required">*</span></label>
@@ -1021,6 +1059,10 @@
         <div>
           <h2>提交历史</h2>
           <p>每一次提交都会保留当时的全部 Checklist 状态，记录不可修改。</p>
+        </div>
+        <div class="history-tools" role="tablist" aria-label="历史展示方式">
+          <button class="history-mode-btn" type="button" data-history-mode="time" role="tab">按时间排序</button>
+          <button class="history-mode-btn" type="button" data-history-mode="group" role="tab">按名字分组</button>
         </div>
         <span id="historyCount" class="history-count">正在读取...</span>
       </div>
@@ -1241,7 +1283,9 @@
     ];
 
     const API_URL = "api/submissions";
-    const state = { activeId: playbooks[0].id, query: "", view: "checklist" };
+    const HISTORY_MODE_STORAGE_KEY = "dta-xhs-history-mode";
+    const TEAM_MEMBERS = ["小鱼", "勤天", "浅浅"];
+    const state = { activeId: playbooks[0].id, query: "", view: "checklist", historyMode: getHistoryMode() };
 
     const els = {
       nav: document.getElementById("nav"),
@@ -1254,7 +1298,7 @@
       resetBtn: document.getElementById("resetBtn"),
       toast: document.getElementById("toast"),
       form: document.getElementById("submissionForm"),
-      submitterName: document.getElementById("submitterName"),
+      submitterOptions: document.querySelectorAll('input[name="submitterName"]'),
       cooperationDate: document.getElementById("cooperationDate"),
       noteTitle: document.getElementById("noteTitle"),
       noteType: document.getElementById("noteType"),
@@ -1265,7 +1309,8 @@
       checklistViewBtn: document.getElementById("checklistViewBtn"),
       historyViewBtn: document.getElementById("historyViewBtn"),
       historyList: document.getElementById("historyList"),
-      historyCount: document.getElementById("historyCount")
+      historyCount: document.getElementById("historyCount"),
+      historyModeButtons: document.querySelectorAll("[data-history-mode]")
     };
 
     function draftKey(id) { return `dta-xhs-submission-draft-${id}`; }
@@ -1336,6 +1381,12 @@
       }));
     }
 
+    function sectionTitle(section, title, items) {
+      const checked = getChecked(state.activeId);
+      const allChecked = items.length > 0 && items.every((_, index) => checked.has(`${section}-${index}`));
+      return `<div class="section-title"><div class="section-heading"><h3>${title}</h3><span>${items.length} 项</span></div>${items.length ? `<div class="section-actions"><button type="button" class="section-select-btn" data-select-section="${section}">${allChecked ? "取消全选" : "全选"}</button></div>` : ""}</div>`;
+    }
+
     function itemList(section, items) {
       if (!items.length) return `<div class="empty">这一类目前没有单独避雷项，执行全局避雷：光线、真实场景、关键词、节奏和色差。</div>`;
       const checked = getChecked(state.activeId);
@@ -1345,21 +1396,39 @@
       }).join("")}</ul>`;
     }
 
+    function toggleSection(section) {
+      const item = activePlaybook();
+      const items = item[section] || [];
+      const checked = getChecked(item.id);
+      const allChecked = items.length > 0 && items.every((_, index) => checked.has(`${section}-${index}`));
+      items.forEach((_, index) => {
+        const key = `${section}-${index}`;
+        allChecked ? checked.delete(key) : checked.add(key);
+      });
+      setChecked(item.id, checked);
+      renderPlaybook();
+      updateProgress();
+    }
+
     function renderPlaybook() {
       const item = activePlaybook();
       els.playbook.innerHTML = `
         <div class="playbook-head"><div><h2>${highlight(item.title)}</h2><p class="subtitle">${highlight(item.sub)}</p></div><div class="fit-box"><b>适合合作</b><span>${highlight(item.fit)}</span></div></div>
         <div class="chips">${item.tags.map(tag => `<span class="chip">${highlight(tag)}</span>`).join("")}</div>
         <div class="section-grid">
-          <article class="section-card"><div class="section-title"><h3>内容优化点</h3><span>${item.optimize.length} 项</span></div>${itemList("optimize", item.optimize)}</article>
-          <article class="section-card avoid"><div class="section-title"><h3>内容避雷点</h3><span>${item.avoid.length} 项</span></div>${itemList("avoid", item.avoid)}</article>
-          <article class="section-card check full"><div class="section-title"><h3>发布前确认</h3><span>${item.checks.length} 项</span></div>${itemList("checks", item.checks)}</article>
+          <article class="section-card">${sectionTitle("optimize", "内容优化点", item.optimize)}${itemList("optimize", item.optimize)}</article>
+          <article class="section-card avoid">${sectionTitle("avoid", "内容避雷点", item.avoid)}${itemList("avoid", item.avoid)}</article>
+          <article class="section-card check full">${sectionTitle("checks", "发布前确认", item.checks)}${itemList("checks", item.checks)}</article>
         </div>`;
       els.playbook.querySelectorAll("input[type='checkbox']").forEach(box => box.addEventListener("change", () => {
         const checked = getChecked(state.activeId);
         box.checked ? checked.add(box.dataset.key) : checked.delete(box.dataset.key);
         setChecked(state.activeId, checked);
+        renderPlaybook();
         updateProgress();
+      }));
+      els.playbook.querySelectorAll("[data-select-section]").forEach(button => button.addEventListener("click", () => {
+        toggleSection(button.dataset.selectSection);
       }));
     }
 
@@ -1417,6 +1486,21 @@
       return Number.isNaN(date.getTime()) ? value : new Intl.DateTimeFormat("zh-CN", { dateStyle: "medium", timeStyle: "short", hour12: false }).format(date);
     }
 
+    function getHistoryMode() {
+      try { return localStorage.getItem(HISTORY_MODE_STORAGE_KEY) === "group" ? "group" : "time"; }
+      catch (_) { return "time"; }
+    }
+
+    function setHistoryMode(mode) {
+      state.historyMode = mode;
+      try { localStorage.setItem(HISTORY_MODE_STORAGE_KEY, mode); } catch (_) { /* browser storage is optional */ }
+      els.historyModeButtons.forEach(button => {
+        const active = button.dataset.historyMode === mode;
+        button.classList.toggle("active", active);
+        button.setAttribute("aria-selected", String(active));
+      });
+    }
+
     function groupBySection(checklist) {
       return checklist.reduce((groups, item) => {
         (groups[item.section] ||= []).push(item);
@@ -1424,18 +1508,30 @@
       }, {});
     }
 
+    function renderHistoryEntry(entry) {
+      const grouped = groupBySection(entry.checklist);
+      const detail = Object.entries(grouped).map(([section, items]) =>
+        `<section class="history-section"><h3>${escapeHtml(section)}</h3><ul class="history-items">${items.map(item => `<li class="history-item ${item.checked ? "checked" : "unchecked"}">${escapeHtml(item.text)}</li>`).join("")}</ul></section>`).join("");
+      return `<article class="history-entry"><div class="history-summary"><div><h3 class="history-title">${escapeHtml(entry.noteTitle)}</h3><div class="history-meta">${escapeHtml(entry.submitterName)} · ${escapeHtml(entry.noteType.title)} · 合作日期 ${escapeHtml(entry.cooperationDate)}</div></div><div class="history-meta">提交于 ${escapeHtml(formatTimestamp(entry.createdAt))}</div><div class="history-progress">确认 ${entry.checkedCount}/${entry.totalCount}</div></div><details><summary>查看当时的 Checklist 明细</summary><div class="history-details">${detail}</div></details></article>`;
+    }
+
     function renderHistory(submissions) {
-      els.historyCount.textContent = `共 ${submissions.length} 条记录`;
-      if (!submissions.length) {
+      const sorted = [...submissions].sort((a, b) => b.id - a.id);
+      els.historyCount.textContent = `共 ${sorted.length} 条记录`;
+      if (!sorted.length) {
         els.historyList.innerHTML = `<div class="history-empty">还没有人提交记录。完成第一条合作笔记 Checklist 后，它会出现在这里。</div>`;
         return;
       }
-      els.historyList.innerHTML = submissions.map(entry => {
-        const grouped = groupBySection(entry.checklist);
-        const detail = Object.entries(grouped).map(([section, items]) => `
-          <section class="history-section"><h3>${escapeHtml(section)}</h3><ul class="history-items">${items.map(item => `<li class="history-item ${item.checked ? "checked" : "unchecked"}">${escapeHtml(item.text)}</li>`).join("")}</ul></section>`).join("");
-        return `<article class="history-entry"><div class="history-summary"><div><h3 class="history-title">${escapeHtml(entry.noteTitle)}</h3><div class="history-meta">${escapeHtml(entry.submitterName)} · ${escapeHtml(entry.noteType.title)} · 合作日期 ${escapeHtml(entry.cooperationDate)}</div></div><div class="history-meta">提交于 ${escapeHtml(formatTimestamp(entry.createdAt))}</div><div class="history-progress">确认 ${entry.checkedCount}/${entry.totalCount}</div></div><details><summary>查看当时的 Checklist 明细</summary><div class="history-details">${detail}</div></details></article>`;
-      }).join("");
+      if (state.historyMode === "time") {
+        els.historyList.innerHTML = sorted.map(renderHistoryEntry).join("");
+        return;
+      }
+      const byName = sorted.reduce((groups, entry) => {
+        (groups[entry.submitterName] ||= []).push(entry);
+        return groups;
+      }, {});
+      const names = [...TEAM_MEMBERS.filter(name => byName[name]), ...Object.keys(byName).filter(name => !TEAM_MEMBERS.includes(name)).sort((a, b) => a.localeCompare(b, "zh-CN"))];
+      els.historyList.innerHTML = `<div class="history-groups">${names.map(name => `<section class="history-group"><div class="history-group-title"><h3>${escapeHtml(name)}</h3><span>${byName[name].length} 条合作记录</span></div><div class="history-group-list">${byName[name].map(renderHistoryEntry).join("")}</div></section>`).join("")}</div>`;
     }
 
     async function loadHistory() {
@@ -1469,7 +1565,7 @@
       if (!els.form.reportValidity()) return;
       const item = activePlaybook();
       const payload = {
-        submitterName: els.submitterName.value.trim(),
+        submitterName: document.querySelector('input[name="submitterName"]:checked')?.value || "",
         cooperationDate: els.cooperationDate.value,
         noteTitle: els.noteTitle.value.trim(),
         noteType: { id: item.id, title: item.title },
@@ -1504,8 +1600,13 @@
     els.form.addEventListener("submit", submitCurrent);
     els.checklistViewBtn.addEventListener("click", () => setView("checklist"));
     els.historyViewBtn.addEventListener("click", () => setView("history"));
+    els.historyModeButtons.forEach(button => button.addEventListener("click", () => {
+      setHistoryMode(button.dataset.historyMode);
+      loadHistory();
+    }));
 
     els.cooperationDate.value = new Date().toISOString().slice(0, 10);
+    setHistoryMode(state.historyMode);
     populateTypeSelect();
     render();
     loadHistory();

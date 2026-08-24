@@ -879,10 +879,6 @@
       border-radius: 6px; background: #fff; color: var(--ink); outline: none;
     }
     .field input:focus, .field select:focus { border-color: rgba(221, 77, 92, .70); box-shadow: 0 0 0 3px rgba(221, 77, 92, .11); }
-    .name-options { display: flex; flex-wrap: wrap; gap: 8px; min-height: 44px; }
-    .name-choice { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 6px; background: #fff; cursor: pointer; font-weight: 750; }
-    .name-choice:has(input:checked) { border-color: rgba(72, 126, 102, .72); background: #f3fbf5; color: var(--green); }
-    .name-choice input { width: 17px; height: 17px; accent-color: var(--green); }
     .required { color: var(--red); }
 
     .submit-panel {
@@ -995,12 +991,13 @@
           </div>
         </div>
         <div class="field responsible-field">
-          <span class="field-label">姓名 <span class="required">*</span></span>
-          <div class="name-options" role="radiogroup" aria-label="选择姓名">
-            <label class="name-choice"><input name="submitterName" type="radio" value="小鱼" required><span>小鱼</span></label>
-            <label class="name-choice"><input name="submitterName" type="radio" value="勤天"><span>勤天</span></label>
-            <label class="name-choice"><input name="submitterName" type="radio" value="浅浅"><span>浅浅</span></label>
-          </div>
+          <label for="submitterName">姓名 <span class="required">*</span></label>
+          <select id="submitterName" name="submitterName" required>
+            <option value="" selected disabled>选择姓名</option>
+            <option value="小鱼">小鱼</option>
+            <option value="勤天">勤天</option>
+            <option value="浅浅">浅浅</option>
+          </select>
         </div>
         <div class="field">
           <label for="cooperationDate">合作日期 <span class="required">*</span></label>
@@ -1298,7 +1295,7 @@
       resetBtn: document.getElementById("resetBtn"),
       toast: document.getElementById("toast"),
       form: document.getElementById("submissionForm"),
-      submitterOptions: document.querySelectorAll('input[name="submitterName"]'),
+      submitterName: document.getElementById("submitterName"),
       cooperationDate: document.getElementById("cooperationDate"),
       noteTitle: document.getElementById("noteTitle"),
       noteType: document.getElementById("noteType"),
@@ -1565,7 +1562,7 @@
       if (!els.form.reportValidity()) return;
       const item = activePlaybook();
       const payload = {
-        submitterName: document.querySelector('input[name="submitterName"]:checked')?.value || "",
+        submitterName: els.submitterName.value,
         cooperationDate: els.cooperationDate.value,
         noteTitle: els.noteTitle.value.trim(),
         noteType: { id: item.id, title: item.title },

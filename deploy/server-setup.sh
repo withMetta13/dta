@@ -9,6 +9,8 @@ NGINX_SITE_AVAILABLE="${NGINX_SITE_AVAILABLE:-/etc/nginx/sites-available/${NGINX
 NGINX_SITE_ENABLED="${NGINX_SITE_ENABLED:-/etc/nginx/sites-enabled/${NGINX_SITE_NAME}}"
 NGINX_DEFAULT_SITE="${NGINX_DEFAULT_SITE:-/etc/nginx/sites-available/default}"
 NGINX_SNIPPET="${NGINX_SNIPPET:-/etc/nginx/snippets/dta-static.conf}"
+SYSTEMD_SERVICE_NAME="${SYSTEMD_SERVICE_NAME:-dta-checklist-api}"
+SYSTEMD_SERVICE_FILE="/etc/systemd/system/${SYSTEMD_SERVICE_NAME}.service"
 
 if [ "$(id -u)" -ne 0 ]; then
   echo "Please run this script as root on the server."
@@ -23,6 +25,16 @@ fi
 
 install -d -m 0755 "$APP_DIR"
 chown -R www-data:www-data "$APP_DIR"
+install -d -o www-data -g www-data -m 0750 /var/lib/dta
+
+if [ ! -f "${APP_DIR}/server/app.py" ] || [ ! -f "${APP_DIR}/deploy/dta-checklist-api.service" ]; then
+  echo "Checklist API files are missing. Pull the latest repository before deployment."
+  exit 1
+fi
+
+install -m 0644 "${APP_DIR}/deploy/dta-checklist-api.service" "$SYSTEMD_SERVICE_FILE"
+systemctl daemon-reload
+systemctl enable --now "$SYSTEMD_SERVICE_NAME"
 
 if [ -n "$DOMAIN" ]; then
   cat >"$NGINX_SITE_AVAILABLE" <<NGINX
@@ -36,6 +48,15 @@ server {
 
     access_log /var/log/nginx/${NGINX_SITE_NAME}.access.log;
     error_log /var/log/nginx/${NGINX_SITE_NAME}.error.log;
+
+    location /api/ {
+        proxy_pass http://127.0.0.1:8787/api/;
+        proxy_http_version 1.1;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+    }
 
     location / {
         try_files \$uri \$uri/ /index.html;
@@ -58,6 +79,15 @@ else
   cat >"$NGINX_SNIPPET" <<NGINX
 location = ${PUBLIC_PATH} {
     return 301 ${PUBLIC_PATH}/;
+}
+
+location ${PUBLIC_PATH}/api/ {
+    proxy_pass http://127.0.0.1:8787/api/;
+    proxy_http_version 1.1;
+    proxy_set_header Host \$host;
+    proxy_set_header X-Real-IP \$remote_addr;
+    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto \$scheme;
 }
 
 location ${PUBLIC_PATH}/ {

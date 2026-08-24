@@ -1,6 +1,6 @@
 # DTA XHS Checklist
 
-Static website for the Xiaohongshu baobei note optimization checklist.
+Collaborative website for the Xiaohongshu baobei note optimization checklist. It records each submitted checklist in a server-side SQLite database.
 
 Entry file:
 

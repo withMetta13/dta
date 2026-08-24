@@ -814,6 +814,98 @@
         height: 142px;
       }
     }
+
+    .mode-switch {
+      display: inline-flex;
+      gap: 4px;
+      padding: 4px;
+      margin: 0 0 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 253, 249, .82);
+      box-shadow: 0 8px 24px rgba(55, 39, 23, .05);
+    }
+
+    .mode-btn {
+      min-height: 38px;
+      padding: 7px 14px;
+      border: 0;
+      border-radius: 5px;
+      background: transparent;
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .mode-btn.active { background: var(--ink); color: #fff; }
+    .hidden { display: none !important; }
+
+    .submission-form {
+      display: grid;
+      grid-template-columns: minmax(180px, .8fr) minmax(160px, .7fr) minmax(220px, 1.2fr) minmax(180px, .9fr);
+      gap: 14px;
+      padding: 20px;
+      margin-bottom: 18px;
+      border: 1px solid rgba(221, 77, 92, .22);
+      border-radius: var(--radius);
+      background: linear-gradient(110deg, #fff7f2, #fffdf9 58%, #f3fbf5);
+      box-shadow: 0 10px 28px rgba(55, 39, 23, .05);
+    }
+
+    .form-intro { grid-column: 1 / -1; display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
+    .form-intro h2 { margin: 0; font-size: 24px; }
+    .form-intro p { margin: 0; color: var(--muted); font-size: 14px; }
+    .field { display: grid; gap: 7px; }
+    .field label { font-size: 13px; font-weight: 800; }
+    .field input, .field select {
+      width: 100%; min-height: 44px; padding: 9px 11px; border: 1px solid var(--line);
+      border-radius: 6px; background: #fff; color: var(--ink); outline: none;
+    }
+    .field input:focus, .field select:focus { border-color: rgba(221, 77, 92, .70); box-shadow: 0 0 0 3px rgba(221, 77, 92, .11); }
+    .required { color: var(--red); }
+
+    .submit-panel {
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      padding: 18px 20px; margin: 0 24px 24px; border: 1px solid rgba(72, 126, 102, .30);
+      border-radius: var(--radius); background: #f3fbf5;
+    }
+    .submit-panel strong { display: block; }
+    .submit-panel span { color: #587066; font-size: 13px; }
+    .submit-btn { min-height: 46px; padding: 10px 18px; border: 1px solid var(--green); border-radius: 6px; background: var(--green); color: #fff; cursor: pointer; font-weight: 800; }
+    .submit-btn:hover { background: #3c6c56; }
+    .submit-btn:disabled { cursor: wait; opacity: .65; }
+
+    .history-view { border: 1px solid var(--line); border-radius: var(--radius); background: rgba(255, 253, 249, .94); box-shadow: 0 12px 36px rgba(55, 39, 23, .07); overflow: hidden; }
+    .history-head { display: flex; align-items: end; justify-content: space-between; gap: 16px; padding: 22px 24px; border-bottom: 1px solid var(--line); background: #fff9f0; }
+    .history-head h2 { margin: 0; font-size: 28px; }
+    .history-head p { margin: 5px 0 0; color: var(--muted); font-size: 14px; }
+    .history-count { color: var(--muted); font-size: 13px; white-space: nowrap; }
+    .history-list { display: grid; gap: 12px; padding: 18px; }
+    .history-empty { padding: 44px 20px; color: var(--muted); text-align: center; }
+    .history-entry { border: 1px solid var(--line); border-radius: var(--radius); background: #fff; overflow: hidden; }
+    .history-summary { display: grid; grid-template-columns: minmax(0, 1.2fr) auto auto; gap: 18px; align-items: center; padding: 16px 18px; }
+    .history-title { margin: 0 0 4px; font-size: 17px; }
+    .history-meta { color: var(--muted); font-size: 13px; }
+    .history-progress { min-width: 90px; color: var(--green); font-size: 14px; font-weight: 800; text-align: right; }
+    .history-entry details { border-top: 1px solid var(--line); }
+    .history-entry summary { padding: 12px 18px; color: var(--blue); cursor: pointer; font-size: 14px; font-weight: 800; }
+    .history-details { display: grid; gap: 12px; padding: 0 18px 18px; }
+    .history-section { overflow: hidden; border: 1px solid #eee5dc; border-radius: 6px; }
+    .history-section h3 { margin: 0; padding: 10px 12px; background: #fffaf4; font-size: 14px; }
+    .history-items { margin: 0; padding: 0; list-style: none; }
+    .history-item { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 9px; padding: 9px 12px; border-top: 1px solid #f2ebe4; font-size: 14px; }
+    .history-item::before { content: ""; width: 16px; height: 16px; margin-top: 3px; border: 2px solid #d8c7b8; border-radius: 5px; }
+    .history-item.checked::before { border-color: var(--green); background: var(--green); box-shadow: inset 0 0 0 3px #fff; }
+    .history-item.unchecked { color: #8e5660; background: #fffafb; }
+
+    @media (max-width: 760px) {
+      .submission-form { grid-template-columns: 1fr; padding: 16px; }
+      .form-intro, .submit-panel, .history-head { display: grid; grid-template-columns: 1fr; }
+      .submit-panel { margin: 0 16px 16px; }
+      .submit-btn { width: 100%; }
+      .history-summary { grid-template-columns: 1fr; gap: 7px; }
+      .history-progress { text-align: left; }
+    }
+
   </style>
 </head>
 <body>
@@ -855,35 +947,86 @@
       </article>
     </section>
 
-    <section class="workspace">
-      <aside class="side" aria-label="笔记类型选择">
-        <div class="side-head">
-          <strong>选择合作笔记类型</strong>
-          <span>适合报备前沟通和出稿前复核</span>
-        </div>
-        <div class="search-wrap">
-          <input id="search" type="search" placeholder="搜索：光线、封面、口播、收纳..." aria-label="搜索清单内容">
-        </div>
-        <nav id="nav" class="nav"></nav>
-      </aside>
+    <div class="mode-switch" role="tablist" aria-label="页面视图">
+      <button id="checklistViewBtn" class="mode-btn active" type="button" role="tab" aria-selected="true">本次提交</button>
+      <button id="historyViewBtn" class="mode-btn" type="button" role="tab" aria-selected="false">提交历史</button>
+    </div>
 
-      <section class="content" aria-live="polite">
-        <div class="toolbar">
-          <div class="progress" aria-label="勾选进度">
-            <div class="progress-top">
-              <span id="progressText">未勾选</span>
-              <span id="progressCount">0/0</span>
-            </div>
-            <div class="bar"><span id="progressBar"></span></div>
-          </div>
-          <div class="toolbar-actions">
-            <button class="tool-btn" id="copyBtn" type="button" title="复制当前类型的完整清单">⧉ 复制清单</button>
-            <button class="tool-btn" id="resetBtn" type="button" title="清空当前类型的勾选状态">↺ 清空勾选</button>
+    <section id="checklistView">
+      <form id="submissionForm" class="submission-form">
+        <div class="form-intro">
+          <div>
+            <h2>本次合作信息</h2>
+            <p>填写信息，逐项确认后提交。本次结果会成为团队可查看的正式记录。</p>
           </div>
         </div>
-        <div id="playbook" class="playbook"></div>
+        <div class="field">
+          <label for="submitterName">姓名 <span class="required">*</span></label>
+          <input id="submitterName" name="submitterName" type="text" maxlength="50" autocomplete="name" required placeholder="填写你的姓名">
+        </div>
+        <div class="field">
+          <label for="cooperationDate">合作日期 <span class="required">*</span></label>
+          <input id="cooperationDate" name="cooperationDate" type="date" required>
+        </div>
+        <div class="field">
+          <label for="noteTitle">合作笔记名称 <span class="required">*</span></label>
+          <input id="noteTitle" name="noteTitle" type="text" maxlength="120" required placeholder="例如：开学旅行行李箱测评">
+        </div>
+        <div class="field">
+          <label for="noteType">笔记类型 <span class="required">*</span></label>
+          <select id="noteType" name="noteType" required></select>
+        </div>
+      </form>
+
+      <section class="workspace">
+        <aside class="side" aria-label="笔记类型选择">
+          <div class="side-head">
+            <strong>选择合作笔记类型</strong>
+            <span>切换类型会同步更新本次提交内容</span>
+          </div>
+          <div class="search-wrap">
+            <input id="search" type="search" placeholder="搜索：光线、封面、口播、收纳..." aria-label="搜索清单内容">
+          </div>
+          <nav id="nav" class="nav"></nav>
+        </aside>
+
+        <section class="content" aria-live="polite">
+          <div class="toolbar">
+            <div class="progress" aria-label="勾选进度">
+              <div class="progress-top">
+                <span id="progressText">未勾选</span>
+                <span id="progressCount">0/0</span>
+              </div>
+              <div class="bar"><span id="progressBar"></span></div>
+            </div>
+            <div class="toolbar-actions">
+              <button class="tool-btn" id="copyBtn" type="button" title="复制当前类型的完整清单">复制清单</button>
+              <button class="tool-btn" id="resetBtn" type="button" title="清空当前类型的勾选状态">清空勾选</button>
+            </div>
+          </div>
+          <div id="playbook" class="playbook"></div>
+          <div class="submit-panel">
+            <div>
+              <strong>确认后提交本次 Checklist</strong>
+              <span id="submitHint">未勾选项也会如实记录，便于后续复盘。</span>
+            </div>
+            <button id="submitBtn" class="submit-btn" type="submit" form="submissionForm">提交本次 Checklist</button>
+          </div>
+        </section>
       </section>
     </section>
+
+    <section id="historyView" class="history-view hidden" aria-live="polite">
+      <div class="history-head">
+        <div>
+          <h2>提交历史</h2>
+          <p>每一次提交都会保留当时的全部 Checklist 状态，记录不可修改。</p>
+        </div>
+        <span id="historyCount" class="history-count">正在读取...</span>
+      </div>
+      <div id="historyList" class="history-list"></div>
+    </section>
+
   </main>
   <div id="toast" class="toast" role="status"></div>
 
@@ -1097,10 +1240,8 @@
       }
     ];
 
-    const state = {
-      activeId: playbooks[0].id,
-      query: ""
-    };
+    const API_URL = "api/submissions";
+    const state = { activeId: playbooks[0].id, query: "", view: "checklist" };
 
     const els = {
       nav: document.getElementById("nav"),
@@ -1111,34 +1252,35 @@
       progressBar: document.getElementById("progressBar"),
       copyBtn: document.getElementById("copyBtn"),
       resetBtn: document.getElementById("resetBtn"),
-      toast: document.getElementById("toast")
+      toast: document.getElementById("toast"),
+      form: document.getElementById("submissionForm"),
+      submitterName: document.getElementById("submitterName"),
+      cooperationDate: document.getElementById("cooperationDate"),
+      noteTitle: document.getElementById("noteTitle"),
+      noteType: document.getElementById("noteType"),
+      submitBtn: document.getElementById("submitBtn"),
+      submitHint: document.getElementById("submitHint"),
+      checklistView: document.getElementById("checklistView"),
+      historyView: document.getElementById("historyView"),
+      checklistViewBtn: document.getElementById("checklistViewBtn"),
+      historyViewBtn: document.getElementById("historyViewBtn"),
+      historyList: document.getElementById("historyList"),
+      historyCount: document.getElementById("historyCount")
     };
 
-    function storageKey(id) {
-      return `dta-xhs-checklist-${id}`;
-    }
+    function draftKey(id) { return `dta-xhs-submission-draft-${id}`; }
 
     function getChecked(id) {
-      try {
-        return new Set(JSON.parse(localStorage.getItem(storageKey(id))) || []);
-      } catch (_) {
-        return new Set();
-      }
+      try { return new Set(JSON.parse(localStorage.getItem(draftKey(id))) || []); }
+      catch (_) { return new Set(); }
     }
 
     function setChecked(id, checkedSet) {
-      localStorage.setItem(storageKey(id), JSON.stringify([...checkedSet]));
+      localStorage.setItem(draftKey(id), JSON.stringify([...checkedSet]));
     }
 
     function activePlaybook() {
       return playbooks.find(item => item.id === state.activeId) || playbooks[0];
-    }
-
-    function highlight(text) {
-      const q = state.query.trim();
-      if (!q) return escapeHtml(text);
-      const parts = escapeHtml(text).split(new RegExp(`(${escapeRegExp(q)})`, "gi"));
-      return parts.map(part => part.toLowerCase() === q.toLowerCase() ? `<mark>${part}</mark>` : part).join("");
     }
 
     function escapeHtml(text) {
@@ -1150,23 +1292,25 @@
         .replaceAll("'", "&#039;");
     }
 
-    function escapeRegExp(text) {
-      return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    function escapeRegExp(text) { return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+
+    function highlight(text) {
+      const q = state.query.trim();
+      if (!q) return escapeHtml(text);
+      const parts = escapeHtml(text).split(new RegExp(`(${escapeRegExp(q)})`, "gi"));
+      return parts.map(part => part.toLowerCase() === q.toLowerCase() ? `<mark>${part}</mark>` : part).join("");
     }
 
     function matchesQuery(item) {
       const q = state.query.trim().toLowerCase();
       if (!q) return true;
-      const haystack = [
-        item.title,
-        item.sub,
-        item.fit,
-        ...item.tags,
-        ...item.optimize,
-        ...item.avoid,
-        ...item.checks
-      ].join(" ").toLowerCase();
-      return haystack.includes(q);
+      return [item.title, item.sub, item.fit, ...item.tags, ...item.optimize, ...item.avoid, ...item.checks]
+        .join(" ").toLowerCase().includes(q);
+    }
+
+    function populateTypeSelect() {
+      els.noteType.innerHTML = playbooks.map(item => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.title)}</option>`).join("");
+      els.noteType.value = state.activeId;
     }
 
     function renderNav() {
@@ -1174,183 +1318,198 @@
       els.nav.innerHTML = visible.map(item => `
         <button type="button" class="${item.id === state.activeId ? "active" : ""}" data-id="${item.id}">
           <span class="nav-icon">${escapeHtml(item.icon)}</span>
-          <span>
-            <span class="nav-title">${highlight(item.title)}</span>
-            <span class="nav-sub">${highlight(item.tags.slice(0, 2).join(" / "))}</span>
-          </span>
+          <span><span class="nav-title">${highlight(item.title)}</span><span class="nav-sub">${highlight(item.tags.slice(0, 2).join(" / "))}</span></span>
           <span class="nav-count">${item.optimize.length + item.avoid.length}</span>
-        </button>
-      `).join("");
+        </button>`).join("");
 
       if (!visible.some(item => item.id === state.activeId) && visible[0]) {
         state.activeId = visible[0].id;
+        els.noteType.value = state.activeId;
         render();
         return;
       }
 
-      els.nav.querySelectorAll("button").forEach(button => {
-        button.addEventListener("click", () => {
-          state.activeId = button.dataset.id;
-          render();
-        });
-      });
+      els.nav.querySelectorAll("button").forEach(button => button.addEventListener("click", () => {
+        state.activeId = button.dataset.id;
+        els.noteType.value = state.activeId;
+        render();
+      }));
     }
 
-    function itemList(type, items) {
-      if (!items.length) {
-        return `<div class="empty">这一类目前没有单独避雷项，执行全局避雷：光线、真实场景、关键词、节奏和色差。</div>`;
-      }
-
+    function itemList(section, items) {
+      if (!items.length) return `<div class="empty">这一类目前没有单独避雷项，执行全局避雷：光线、真实场景、关键词、节奏和色差。</div>`;
       const checked = getChecked(state.activeId);
       return `<ul class="items">${items.map((text, index) => {
-        const key = `${type}-${index}`;
-        return `
-          <li class="item">
-            <input id="${key}" type="checkbox" data-key="${key}" ${checked.has(key) ? "checked" : ""}>
-            <label for="${key}">${highlight(text)}</label>
-          </li>
-        `;
+        const key = `${section}-${index}`;
+        return `<li class="item"><input id="${key}" type="checkbox" data-key="${key}" ${checked.has(key) ? "checked" : ""}><label for="${key}">${highlight(text)}</label></li>`;
       }).join("")}</ul>`;
     }
 
     function renderPlaybook() {
       const item = activePlaybook();
       els.playbook.innerHTML = `
-        <div class="playbook-head">
-          <div>
-            <h2>${highlight(item.title)}</h2>
-            <p class="subtitle">${highlight(item.sub)}</p>
-          </div>
-          <div class="fit-box">
-            <b>适合合作</b>
-            <span>${highlight(item.fit)}</span>
-          </div>
-        </div>
+        <div class="playbook-head"><div><h2>${highlight(item.title)}</h2><p class="subtitle">${highlight(item.sub)}</p></div><div class="fit-box"><b>适合合作</b><span>${highlight(item.fit)}</span></div></div>
         <div class="chips">${item.tags.map(tag => `<span class="chip">${highlight(tag)}</span>`).join("")}</div>
         <div class="section-grid">
-          <article class="section-card">
-            <div class="section-title">
-              <h3>内容优化点</h3>
-              <span>${item.optimize.length} 项</span>
-            </div>
-            ${itemList("optimize", item.optimize)}
-          </article>
-          <article class="section-card avoid">
-            <div class="section-title">
-              <h3>内容避雷点</h3>
-              <span>${item.avoid.length} 项</span>
-            </div>
-            ${itemList("avoid", item.avoid)}
-          </article>
-          <article class="section-card check full">
-            <div class="section-title">
-              <h3>发布前确认</h3>
-              <span>${item.checks.length} 项</span>
-            </div>
-            ${itemList("checks", item.checks)}
-          </article>
-        </div>
-      `;
+          <article class="section-card"><div class="section-title"><h3>内容优化点</h3><span>${item.optimize.length} 项</span></div>${itemList("optimize", item.optimize)}</article>
+          <article class="section-card avoid"><div class="section-title"><h3>内容避雷点</h3><span>${item.avoid.length} 项</span></div>${itemList("avoid", item.avoid)}</article>
+          <article class="section-card check full"><div class="section-title"><h3>发布前确认</h3><span>${item.checks.length} 项</span></div>${itemList("checks", item.checks)}</article>
+        </div>`;
+      els.playbook.querySelectorAll("input[type='checkbox']").forEach(box => box.addEventListener("change", () => {
+        const checked = getChecked(state.activeId);
+        box.checked ? checked.add(box.dataset.key) : checked.delete(box.dataset.key);
+        setChecked(state.activeId, checked);
+        updateProgress();
+      }));
+    }
 
-      els.playbook.querySelectorAll("input[type='checkbox']").forEach(box => {
-        box.addEventListener("change", () => {
-          const checked = getChecked(state.activeId);
-          if (box.checked) checked.add(box.dataset.key);
-          else checked.delete(box.dataset.key);
-          setChecked(state.activeId, checked);
-          updateProgress();
-        });
-      });
+    function currentChecklist() {
+      const item = activePlaybook();
+      const checked = getChecked(item.id);
+      return [
+        ...item.optimize.map((text, index) => ({ section: "内容优化点", text, checked: checked.has(`optimize-${index}`) })),
+        ...item.avoid.map((text, index) => ({ section: "内容避雷点", text, checked: checked.has(`avoid-${index}`) })),
+        ...item.checks.map((text, index) => ({ section: "发布前确认", text, checked: checked.has(`checks-${index}`) }))
+      ];
     }
 
     function updateProgress() {
-      const item = activePlaybook();
-      const total = item.optimize.length + item.avoid.length + item.checks.length;
-      const checked = [...getChecked(item.id)].filter(key => {
-        const [type, rawIndex] = key.split("-");
-        const index = Number(rawIndex);
-        return item[type] && item[type][index];
-      }).length;
-      const percent = total ? Math.round((checked / total) * 100) : 0;
+      const checklist = currentChecklist();
+      const checked = checklist.filter(item => item.checked).length;
+      const total = checklist.length;
+      const percent = total ? Math.round(checked / total * 100) : 0;
       els.progressText.textContent = percent === 100 ? "已全部确认" : percent > 0 ? `已确认 ${percent}%` : "未勾选";
       els.progressCount.textContent = `${checked}/${total}`;
       els.progressBar.style.width = `${percent}%`;
+      els.submitHint.textContent = checked === total ? "已确认全部要点，可提交正式记录。" : `当前已确认 ${checked}/${total} 项；未勾选项也会如实记录。`;
     }
 
     function copyCurrent() {
       const item = activePlaybook();
-      const lines = [
-        `【${item.title}】小红书报备笔记 Checklist`,
-        "",
-        `适合合作：${item.fit}`,
-        `关键词：${item.tags.join(" / ")}`,
-        "",
-        "内容优化点：",
-        ...item.optimize.map((text, index) => `${index + 1}. ${text}`),
-        "",
-        "内容避雷点：",
-        ...(item.avoid.length ? item.avoid.map((text, index) => `${index + 1}. ${text}`) : ["暂无专属避雷，执行全局避雷。"]),
-        "",
-        "发布前确认：",
-        ...item.checks.map((text, index) => `${index + 1}. ${text}`)
-      ];
-      copyText(lines.join("\n")).then(
-        () => showToast("已复制当前清单"),
-        () => showToast("复制失败，可手动选择页面文字")
-      );
+      const lines = [`【${item.title}】小红书报备笔记 Checklist`, "", `适合合作：${item.fit}`, `关键词：${item.tags.join(" / ")}`, "", "内容优化点：", ...item.optimize.map((text, index) => `${index + 1}. ${text}`), "", "内容避雷点：", ...(item.avoid.length ? item.avoid.map((text, index) => `${index + 1}. ${text}`) : ["暂无专属避雷，执行全局避雷。"]), "", "发布前确认：", ...item.checks.map((text, index) => `${index + 1}. ${text}`)];
+      copyText(lines.join("\n")).then(() => showToast("已复制当前清单"), () => showToast("复制失败，可手动选择页面文字"));
     }
 
     function copyText(text) {
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        return navigator.clipboard.writeText(text);
-      }
-
+      if (navigator.clipboard?.writeText) return navigator.clipboard.writeText(text);
       return new Promise((resolve, reject) => {
-        const area = document.createElement("textarea");
-        area.value = text;
-        area.setAttribute("readonly", "");
-        area.style.position = "fixed";
-        area.style.left = "-9999px";
-        document.body.appendChild(area);
-        area.select();
-        try {
-          document.execCommand("copy") ? resolve() : reject(new Error("copy failed"));
-        } catch (error) {
-          reject(error);
-        } finally {
-          document.body.removeChild(area);
-        }
+        const area = document.createElement("textarea"); area.value = text; area.setAttribute("readonly", ""); area.style.position = "fixed"; area.style.left = "-9999px";
+        document.body.appendChild(area); area.select();
+        try { document.execCommand("copy") ? resolve() : reject(new Error("copy failed")); }
+        catch (error) { reject(error); }
+        finally { document.body.removeChild(area); }
       });
     }
 
     function resetCurrent() {
-      localStorage.removeItem(storageKey(state.activeId));
-      renderPlaybook();
-      updateProgress();
-      showToast("已清空当前勾选");
+      localStorage.removeItem(draftKey(state.activeId));
+      renderPlaybook(); updateProgress(); showToast("已清空当前勾选");
     }
 
     function showToast(text) {
-      els.toast.textContent = text;
-      els.toast.classList.add("show");
+      els.toast.textContent = text; els.toast.classList.add("show");
       window.clearTimeout(showToast.timer);
-      showToast.timer = window.setTimeout(() => els.toast.classList.remove("show"), 1800);
+      showToast.timer = window.setTimeout(() => els.toast.classList.remove("show"), 2200);
     }
 
-    function render() {
-      renderNav();
-      renderPlaybook();
-      updateProgress();
+    function formatTimestamp(value) {
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? value : new Intl.DateTimeFormat("zh-CN", { dateStyle: "medium", timeStyle: "short", hour12: false }).format(date);
     }
 
-    els.search.addEventListener("input", event => {
-      state.query = event.target.value;
-      render();
-    });
+    function groupBySection(checklist) {
+      return checklist.reduce((groups, item) => {
+        (groups[item.section] ||= []).push(item);
+        return groups;
+      }, {});
+    }
+
+    function renderHistory(submissions) {
+      els.historyCount.textContent = `共 ${submissions.length} 条记录`;
+      if (!submissions.length) {
+        els.historyList.innerHTML = `<div class="history-empty">还没有人提交记录。完成第一条合作笔记 Checklist 后，它会出现在这里。</div>`;
+        return;
+      }
+      els.historyList.innerHTML = submissions.map(entry => {
+        const grouped = groupBySection(entry.checklist);
+        const detail = Object.entries(grouped).map(([section, items]) => `
+          <section class="history-section"><h3>${escapeHtml(section)}</h3><ul class="history-items">${items.map(item => `<li class="history-item ${item.checked ? "checked" : "unchecked"}">${escapeHtml(item.text)}</li>`).join("")}</ul></section>`).join("");
+        return `<article class="history-entry"><div class="history-summary"><div><h3 class="history-title">${escapeHtml(entry.noteTitle)}</h3><div class="history-meta">${escapeHtml(entry.submitterName)} · ${escapeHtml(entry.noteType.title)} · 合作日期 ${escapeHtml(entry.cooperationDate)}</div></div><div class="history-meta">提交于 ${escapeHtml(formatTimestamp(entry.createdAt))}</div><div class="history-progress">确认 ${entry.checkedCount}/${entry.totalCount}</div></div><details><summary>查看当时的 Checklist 明细</summary><div class="history-details">${detail}</div></details></article>`;
+      }).join("");
+    }
+
+    async function loadHistory() {
+      els.historyList.innerHTML = `<div class="history-empty">正在读取提交历史...</div>`;
+      els.historyCount.textContent = "正在读取...";
+      try {
+        const response = await fetch(API_URL, { headers: { Accept: "application/json" } });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error || "读取提交历史失败。");
+        renderHistory(Array.isArray(data.submissions) ? data.submissions : []);
+      } catch (error) {
+        els.historyCount.textContent = "读取失败";
+        els.historyList.innerHTML = `<div class="history-empty">无法读取提交历史。请确认服务器服务已启动后重试。</div>`;
+      }
+    }
+
+    function setView(view) {
+      state.view = view;
+      const checklist = view === "checklist";
+      els.checklistView.classList.toggle("hidden", !checklist);
+      els.historyView.classList.toggle("hidden", checklist);
+      els.checklistViewBtn.classList.toggle("active", checklist);
+      els.historyViewBtn.classList.toggle("active", !checklist);
+      els.checklistViewBtn.setAttribute("aria-selected", String(checklist));
+      els.historyViewBtn.setAttribute("aria-selected", String(!checklist));
+      if (!checklist) loadHistory();
+    }
+
+    async function submitCurrent(event) {
+      event.preventDefault();
+      if (!els.form.reportValidity()) return;
+      const item = activePlaybook();
+      const payload = {
+        submitterName: els.submitterName.value.trim(),
+        cooperationDate: els.cooperationDate.value,
+        noteTitle: els.noteTitle.value.trim(),
+        noteType: { id: item.id, title: item.title },
+        checklist: currentChecklist()
+      };
+      els.submitBtn.disabled = true;
+      els.submitBtn.textContent = "正在提交...";
+      try {
+        const response = await fetch(API_URL, { method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify(payload) });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error || "提交失败，请稍后再试。"
+        );
+        localStorage.removeItem(draftKey(item.id));
+        els.noteTitle.value = "";
+        renderPlaybook(); updateProgress();
+        showToast(`已提交记录 #${data.id} · ${formatTimestamp(data.createdAt)}`);
+        loadHistory();
+      } catch (error) {
+        showToast(error.message || "提交失败，请稍后再试。");
+      } finally {
+        els.submitBtn.disabled = false;
+        els.submitBtn.textContent = "提交本次 Checklist";
+      }
+    }
+
+    function render() { renderNav(); renderPlaybook(); updateProgress(); }
+
+    els.search.addEventListener("input", event => { state.query = event.target.value; render(); });
+    els.noteType.addEventListener("change", event => { state.activeId = event.target.value; render(); });
     els.copyBtn.addEventListener("click", copyCurrent);
     els.resetBtn.addEventListener("click", resetCurrent);
+    els.form.addEventListener("submit", submitCurrent);
+    els.checklistViewBtn.addEventListener("click", () => setView("checklist"));
+    els.historyViewBtn.addEventListener("click", () => setView("history"));
 
+    els.cooperationDate.value = new Date().toISOString().slice(0, 10);
+    populateTypeSelect();
     render();
+    loadHistory();
+
   </script>
 </body>
 </html>

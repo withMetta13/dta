@@ -1,0 +1,20 @@
+[Unit]
+Description=DTA Checklist submission API
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/dta/server
+Environment=DTA_API_HOST=127.0.0.1
+Environment=DTA_API_PORT=8787
+Environment=DTA_DATA_DIR=/var/lib/dta
+ExecStart=/usr/bin/python3 /var/www/dta/server/app.py
+Restart=always
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

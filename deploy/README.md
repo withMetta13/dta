@@ -1,6 +1,6 @@
 # DTA Server Deployment
 
-This repo is a standalone static website. It can live on the same Aliyun ECS server as the Amazon tools.
+This repo is a standalone checklist site with a small Python + SQLite submission service. It can live on the same Aliyun ECS server as the Amazon tools.
 
 If there is no domain name yet, serve it under a separate IP path such as `/dta/`.
 
@@ -37,6 +37,17 @@ cd /var/www/dta
 sudo git pull
 sudo DTA_PUBLIC_PATH=/dta ./deploy/server-setup.sh
 ```
+
+The setup script will start the local `dta-checklist-api` service, store submissions in `/var/lib/dta/checklist.sqlite3`, and proxy `http://<ECS-IP>/dta/api/` to that local service.
+
+Check the service after deployment:
+
+```bash
+sudo systemctl status dta-checklist-api --no-pager
+curl http://127.0.0.1:8787/api/submissions
+```
+
+The database is intentionally retained in `/var/lib/dta` when the Git repository is updated.
 
 ## Future Domain Deployment
 

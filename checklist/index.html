@@ -47,23 +47,23 @@
     .shell {
       width: min(1360px, calc(100vw - 32px));
       margin: 0 auto;
-      padding: 28px 0 56px;
+      padding: 18px 0 48px;
     }
 
     .hero {
       position: relative;
       display: grid;
-      grid-template-columns: minmax(0, 1.18fr) minmax(360px, .82fr);
-      gap: 22px;
+      grid-template-columns: minmax(0, 1.28fr) minmax(300px, .72fr);
+      gap: 14px;
       align-items: stretch;
-      min-height: 308px;
-      margin-bottom: 18px;
+      min-height: 250px;
+      margin-bottom: 14px;
     }
 
     .hero-copy {
       position: relative;
       overflow: hidden;
-      padding: 36px;
+      padding: 26px 28px;
       border: 1px solid rgba(172, 139, 104, .24);
       border-radius: var(--radius);
       background:
@@ -77,30 +77,30 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      min-height: 30px;
-      padding: 4px 10px;
+      min-height: 26px;
+      padding: 3px 8px;
       border: 1px solid rgba(221, 77, 92, .24);
       border-radius: 999px;
       background: rgba(255, 255, 255, .72);
       color: var(--rose);
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 750;
     }
 
     .eyebrow::before {
       content: "";
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
       border-radius: 99px;
       background: var(--red);
-      box-shadow: 0 0 0 5px rgba(221, 77, 92, .12);
+      box-shadow: 0 0 0 4px rgba(221, 77, 92, .12);
     }
 
     h1 {
       max-width: 760px;
-      margin: 22px 0 14px;
-      font-size: clamp(34px, 4.8vw, 66px);
-      line-height: 1.05;
+      margin: 12px 0 8px;
+      font-size: clamp(30px, 3.4vw, 48px);
+      line-height: 1.08;
       letter-spacing: 0;
     }
 
@@ -108,20 +108,21 @@
       max-width: 760px;
       margin: 0;
       color: #504d57;
-      font-size: 18px;
+      font-size: 15px;
+      line-height: 1.55;
     }
 
     .hero-metrics {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
-      margin-top: 28px;
+      gap: 8px;
+      margin-top: 16px;
       max-width: 760px;
     }
 
     .metric {
-      min-height: 86px;
-      padding: 13px 14px;
+      min-height: 64px;
+      padding: 9px 11px;
       border: 1px solid rgba(172, 139, 104, .24);
       border-radius: var(--radius);
       background: rgba(255, 253, 249, .82);
@@ -130,13 +131,13 @@
 
     .metric strong {
       display: block;
-      font-size: 28px;
+      font-size: 22px;
       line-height: 1.1;
     }
 
     .metric span {
       display: block;
-      margin-top: 4px;
+      margin-top: 1px;
       color: var(--muted);
       font-size: 13px;
     }
@@ -144,8 +145,8 @@
     .visual-panel {
       position: relative;
       overflow: hidden;
-      min-height: 308px;
-      padding: 22px;
+      min-height: 250px;
+      padding: 12px;
       border: 1px solid rgba(172, 139, 104, .24);
       border-radius: var(--radius);
       background:
@@ -158,16 +159,16 @@
     .hero-art {
       position: relative;
       height: 100%;
-      min-height: 396px;
+      min-height: 226px;
       isolation: isolate;
     }
 
     .hero-art::before {
       content: "";
       position: absolute;
-      inset: 18px 20px auto auto;
-      width: 188px;
-      height: 188px;
+      inset: 10px 14px auto auto;
+      width: 142px;
+      height: 142px;
       border-radius: 999px;
       background: rgba(255, 253, 249, .12);
       filter: blur(2px);
@@ -183,29 +184,29 @@
     }
 
     .art-card.large {
-      left: 22px;
-      right: 78px;
-      top: 26px;
-      height: 218px;
+      left: 16px;
+      right: 50px;
+      top: 12px;
+      height: 144px;
       background:
         linear-gradient(135deg, rgba(255, 253, 249, .18), rgba(255, 253, 249, .05)),
         linear-gradient(120deg, rgba(255, 138, 162, .34), rgba(117, 185, 158, .26));
     }
 
     .art-card.small {
-      right: 26px;
-      bottom: 34px;
-      width: 178px;
-      height: 128px;
+      right: 16px;
+      bottom: 18px;
+      width: 124px;
+      height: 86px;
       background:
         linear-gradient(135deg, rgba(255, 217, 165, .26), rgba(255, 253, 249, .08));
     }
 
     .art-card.strip {
-      left: 38px;
-      bottom: 46px;
-      width: 176px;
-      height: 82px;
+      left: 20px;
+      bottom: 24px;
+      width: 126px;
+      height: 56px;
       background:
         linear-gradient(90deg, #ff8aa2 0 28%, #ffd9a5 28% 56%, #75b99e 56% 78%, #8ab1e6 78%);
     }
@@ -213,18 +214,18 @@
     .art-suitcase {
       position: absolute;
       left: 50%;
-      top: 52px;
-      width: 132px;
-      height: 184px;
-      border: 4px solid rgba(32, 32, 39, .64);
-      border-radius: 28px;
+      top: 28px;
+      width: 92px;
+      height: 126px;
+      border: 3px solid rgba(32, 32, 39, .64);
+      border-radius: 20px;
       background:
         repeating-linear-gradient(90deg, rgba(255, 255, 255, .28) 0 7px, transparent 7px 20px),
         linear-gradient(145deg, #ff88a0, #ffd7a1 52%, #6fba9d);
       box-shadow:
-        inset 20px 0 rgba(255, 255, 255, .20),
-        inset -18px 0 rgba(32, 32, 39, .08),
-        0 30px 60px rgba(0, 0, 0, .30);
+        inset 14px 0 rgba(255, 255, 255, .20),
+        inset -12px 0 rgba(32, 32, 39, .08),
+        0 20px 42px rgba(0, 0, 0, .30);
       transform: translateX(-50%) rotate(-4deg);
       z-index: 2;
     }
@@ -232,11 +233,11 @@
     .art-suitcase::before {
       content: "";
       position: absolute;
-      left: 34px;
-      top: -32px;
-      width: 56px;
-      height: 30px;
-      border: 5px solid rgba(255, 253, 249, .78);
+      left: 23px;
+      top: -23px;
+      width: 40px;
+      height: 22px;
+      border: 4px solid rgba(255, 253, 249, .78);
       border-bottom: 0;
       border-radius: 18px 18px 0 0;
     }
@@ -244,10 +245,10 @@
     .art-suitcase::after {
       content: "";
       position: absolute;
-      left: 22px;
-      right: 22px;
-      bottom: -15px;
-      height: 14px;
+      left: 14px;
+      right: 14px;
+      bottom: -11px;
+      height: 10px;
       border-radius: 999px;
       background: rgba(0, 0, 0, .28);
       filter: blur(1px);
@@ -261,15 +262,15 @@
     }
 
     .art-line.one {
-      left: 42px;
-      right: 62px;
-      top: 278px;
+      left: 24px;
+      right: 42px;
+      top: 175px;
     }
 
     .art-line.two {
-      left: 116px;
-      right: 42px;
-      top: 294px;
+      left: 72px;
+      right: 24px;
+      top: 190px;
     }
 
     .art-dot {
@@ -282,18 +283,18 @@
     }
 
     .art-dot.one {
-      left: 42px;
-      top: 34px;
+      left: 24px;
+      top: 18px;
     }
 
     .art-dot.two {
-      right: 58px;
-      top: 242px;
+      right: 36px;
+      top: 160px;
     }
 
     .art-dot.three {
-      left: 236px;
-      bottom: 42px;
+      left: 170px;
+      bottom: 20px;
     }
 
     .global-strip {
@@ -422,7 +423,17 @@
       border-radius: 50%;
       background: #f0e7df;
       color: var(--rose);
-      font-weight: 850;
+    }
+
+    .nav-icon svg {
+      width: 19px;
+      height: 19px;
+      stroke-width: 1.9;
+    }
+
+    .nav button.active .nav-icon {
+      background: #ffe4e8;
+      color: var(--red);
     }
 
     .nav-title {
@@ -755,13 +766,8 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
-      .visual-panel {
-        min-height: 230px;
-      }
-
-      .hero-art {
-        min-height: 278px;
-      }
+      .visual-panel { min-height: 220px; }
+      .hero-art { min-height: 206px; }
     }
 
     @media (max-width: 760px) {
@@ -799,37 +805,32 @@
         flex: 1;
       }
 
-      .visual-panel {
-        min-height: 280px;
-      }
-
-      .hero-art {
-        min-height: 238px;
-      }
+      .visual-panel { min-height: 220px; }
+      .hero-art { min-height: 200px; }
 
       .art-card.large {
         left: 12px;
         right: 46px;
-        top: 18px;
-        height: 156px;
+        top: 12px;
+        height: 132px;
       }
 
       .art-card.strip {
-        left: 24px;
-        bottom: 28px;
+        left: 18px;
+        bottom: 20px;
       }
 
       .art-card.small {
-        right: 16px;
-        bottom: 24px;
-        width: 138px;
-        height: 92px;
+        right: 14px;
+        bottom: 16px;
+        width: 118px;
+        height: 80px;
       }
 
       .art-suitcase {
-        top: 42px;
-        width: 104px;
-        height: 142px;
+        top: 26px;
+        width: 88px;
+        height: 120px;
       }
     }
 
@@ -1069,13 +1070,14 @@
   </main>
   <div id="toast" class="toast" role="status"></div>
 
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
   <script>
     const playbooks = [
       {
         id: "talking",
         title: "露脸口播",
         sub: "适合日常 vlog 型账号尝试，用真实环境和有冲击力的表达带出卖点。",
-        icon: "口",
+        icon: "mic",
         fit: "日常 vlog、女大学生宿舍、出行准备、真实生活场景。",
         tags: ["前3-5秒痛点", "语气有起伏", "出片", "巨能装", "颜值关键词"],
         optimize: [
@@ -1104,7 +1106,7 @@
         id: "review",
         title: "测评笔记",
         sub: "旺季前适合做横测和攻略，目标是承接搜索，明确解决不会选的问题。",
-        icon: "测",
+        icon: "search-check",
         fit: "618、开学季、旅行旺季前一个月；攻略型、横测型达人。",
         tags: ["横测攻略", "选购痛点", "对比性", "搜索关键词", "利他封面"],
         optimize: [
@@ -1131,7 +1133,7 @@
         id: "outfit-image",
         title: "穿搭图文",
         sub: "用同色系穿搭和出行道具放大箱子的颜值，画面必须干净、明亮、纹路清楚。",
-        icon: "图",
+        icon: "shirt",
         fit: "多巴胺穿搭、旅行穿搭、机场高铁出行图文。",
         tags: ["同色系", "大容量", "出行场景", "箱子纹路", "身高适配"],
         optimize: [
@@ -1159,7 +1161,7 @@
         id: "outfit-video",
         title: "穿搭卡点",
         sub: "适合风格强、节奏好的账号，重点是颜色统一、场景真实、卡点不抢箱子。",
-        icon: "卡",
+        icon: "clapperboard",
         fit: "主页风格偏多巴胺的达人，适合芭比粉、荧光绿等高饱和颜色。",
         tags: ["高铁机场", "同色花字", "大容量", "DTA关键词", "尺寸适配"],
         optimize: [
@@ -1188,7 +1190,7 @@
         id: "home-storage",
         title: "家居收纳",
         sub: "用高级简约的画面呈现收纳价值，封面必须干净，物品和目标人群要匹配。",
-        icon: "收",
+        icon: "package-open",
         fit: "家居收纳、宠物、追星、出行物品整理等有明确人群的账号。",
         tags: ["人群地域用途", "高级花字", "白噪音", "同色收纳", "爆款BGM"],
         optimize: [
@@ -1226,7 +1228,7 @@
         id: "vlog",
         title: "Vlog",
         sub: "以出行和旅行为主线，让行李箱贯穿全程，并在真实场景里反复出现。",
-        icon: "V",
+        icon: "plane",
         fit: "旅行、周末出行、开学返校、出差、假期 vlog。",
         tags: ["出行旅行", "全程贯穿", "人群地域用途", "无色差", "优质素材"],
         optimize: [
@@ -1250,7 +1252,7 @@
         id: "bedroom-storage",
         title: "好物收纳（卧室）",
         sub: "先用卧室风格抓流量，再让行李箱自然融入，不要把内容拍成硬广。",
-        icon: "卧",
+        icon: "bed-double",
         fit: "可爱卧室、IP 玩偶展示、卧室好物、生活方式账号。",
         tags: ["卧室吸引点", "板正角度", "同色卧室", "抓流量封面", "避免色差"],
         optimize: [
@@ -1359,7 +1361,7 @@
       const visible = playbooks.filter(matchesQuery);
       els.nav.innerHTML = visible.map(item => `
         <button type="button" class="${item.id === state.activeId ? "active" : ""}" data-id="${item.id}">
-          <span class="nav-icon">${escapeHtml(item.icon)}</span>
+          <span class="nav-icon" aria-hidden="true"><i data-lucide="${escapeHtml(item.icon)}"></i></span>
           <span><span class="nav-title">${highlight(item.title)}</span><span class="nav-sub">${highlight(item.tags.slice(0, 2).join(" / "))}</span></span>
           <span class="nav-count">${item.optimize.length + item.avoid.length}</span>
         </button>`).join("");
@@ -1376,6 +1378,8 @@
         els.noteType.value = state.activeId;
         render();
       }));
+
+      window.lucide?.createIcons();
     }
 
     function sectionTitle(section, title, items) {

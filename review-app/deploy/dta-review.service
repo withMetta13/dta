@@ -1,0 +1,18 @@
+[Unit]
+Description=Xiaohongshu Potential Notes Review UI
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/dta/review-app
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/usr/bin/python3 /var/www/dta/review-app/scripts/potential_notes.py --db /var/lib/dta-review/potential_notes.sqlite3 serve --host 127.0.0.1 --port 8788
+Restart=always
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

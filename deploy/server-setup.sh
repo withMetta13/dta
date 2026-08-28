@@ -92,6 +92,20 @@ location ${PUBLIC_PATH}/api/ {
     proxy_set_header X-Forwarded-Proto \$scheme;
 }
 
+location ${PUBLIC_PATH}/checklist/api/ {
+    auth_basic off;
+    proxy_pass http://127.0.0.1:8787/api/;
+    proxy_http_version 1.1;
+    proxy_set_header Host \$host;
+    proxy_set_header X-Real-IP \$remote_addr;
+    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto \$scheme;
+}
+
+location ^~ ${PUBLIC_PATH}/review-app/ {
+    return 404;
+}
+
 location ${PUBLIC_PATH}/ {
         auth_basic off;
     alias ${APP_DIR}/;
@@ -120,5 +134,9 @@ fi
 
 nginx -t
 systemctl reload nginx
+
+if [ -f "${APP_DIR}/review-app/deploy/server-setup.sh" ]; then
+  APP_DIR="${APP_DIR}/review-app" PUBLIC_PATH="${PUBLIC_PATH}/review" bash "${APP_DIR}/review-app/deploy/server-setup.sh"
+fi
 
 echo "DTA static site is ready at ${READY_URL}"

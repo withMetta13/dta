@@ -1,0 +1,64 @@
+{
+  "timezone": "Asia/Shanghai",
+  "schedule": {
+    "weekdays": ["MO", "WE", "FR"],
+    "hour": 9,
+    "minute": 30
+  },
+  "search": {
+    "time_filter": "一周内",
+    "sort": "最多点赞",
+    "max_results_per_keyword": 40,
+    "minimum_likes": 200,
+    "high_performance_likes": 400
+  },
+  "limits": {
+    "deep_dive_per_run": 20,
+    "top_level_comments_per_note": 30,
+    "promotion_checks_on_monday": 5,
+    "refresh_days": 14,
+    "refresh_notes_per_run": 100
+  },
+  "risk_control": {
+    "minimum_hours_between_full_runs": 24,
+    "keyword_delay_seconds": [15, 25],
+    "keyword_batch_size": 5,
+    "batch_cooldown_seconds": [90, 120],
+    "note_delay_seconds": [8, 15],
+    "stop_on_captcha_or_login_failure": true
+  },
+  "paid_fallback": {
+    "enabled": false,
+    "provider": "tikhub_app_v2",
+    "mode": "approved_preview_only",
+    "unit_price_usd": 0.01,
+    "max_cost_per_run_usd": 1.20,
+    "max_cost_per_month_usd": 15.00,
+    "preflight_max_requests": 5,
+    "fallback_scope": "enrich_existing_note_ids_only",
+    "cdp_circuit_breakers": [
+      "captcha_required",
+      "login_required",
+      "rate_limited",
+      "two_consecutive_detail_failures",
+      "two_consecutive_detail_loads_over_30_seconds"
+    ],
+    "automatic_retry": false
+  },
+  "keywords": [
+    {"keyword": "行李箱", "category": "核心品类词", "enabled": true},
+    {"keyword": "旅行箱", "category": "核心品类词", "enabled": true},
+    {"keyword": "拉杆箱", "category": "核心品类词", "enabled": true},
+    {"keyword": "登机箱", "category": "核心品类词", "enabled": true},
+    {"keyword": "行李箱推荐", "category": "用户需求词", "enabled": true},
+    {"keyword": "出国行李箱", "category": "用户需求词", "enabled": true},
+    {"keyword": "行李箱女", "category": "用户需求词", "enabled": true},
+    {"keyword": "ito行李箱", "category": "品牌/竞品词", "enabled": true},
+    {"keyword": "不莱枚行李箱", "category": "品牌/竞品词", "enabled": true},
+    {"keyword": "地平线8号行李箱", "category": "品牌/竞品词", "enabled": true},
+    {"keyword": "马尔维行李箱", "category": "品牌/竞品词", "enabled": true},
+    {"keyword": "cece行李箱", "category": "品牌/竞品词", "enabled": true},
+    {"keyword": "漫游行李箱", "category": "品牌/竞品词", "enabled": true},
+    {"keyword": "dta行李箱", "category": "品牌/竞品词", "enabled": true}
+  ]
+}

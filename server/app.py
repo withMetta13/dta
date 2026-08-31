@@ -37,6 +37,7 @@ def initialize_db() -> None:
               submitter_name TEXT NOT NULL,
               cooperation_date TEXT NOT NULL,
               note_title TEXT NOT NULL,
+              collaboration_note TEXT NOT NULL DEFAULT '',
               note_type_id TEXT NOT NULL,
               note_type_title TEXT NOT NULL,
               checked_count INTEGER NOT NULL,
@@ -46,6 +47,9 @@ def initialize_db() -> None:
             )
             """
         )
+        columns = {row["name"] for row in connection.execute("PRAGMA table_info(submissions)")}
+        if "collaboration_note" not in columns:
+            connection.execute("ALTER TABLE submissions ADD COLUMN collaboration_note TEXT NOT NULL DEFAULT ''")
 
 
 def iso_now() -> str:
@@ -63,6 +67,7 @@ def validate_submission(payload: object) -> tuple[dict | None, str | None]:
     submitter_name = normalize_text(payload.get("submitterName"), 50)
     cooperation_date = normalize_text(payload.get("cooperationDate"), 10)
     note_title = normalize_text(payload.get("noteTitle"), 120)
+    collaboration_note = normalize_text(payload.get("collaborationNote"), 800)
     note_type = payload.get("noteType")
     checklist = payload.get("checklist")
 
@@ -101,6 +106,7 @@ def validate_submission(payload: object) -> tuple[dict | None, str | None]:
         "submitter_name": submitter_name,
         "cooperation_date": cooperation_date,
         "note_title": note_title,
+        "collaboration_note": collaboration_note,
         "note_type_id": note_type_id,
         "note_type_title": note_type_title,
         "checklist": clean_items,
@@ -142,7 +148,7 @@ class ApiHandler(BaseHTTPRequestHandler):
         with connect_db() as connection:
             rows = connection.execute(
                 """
-                SELECT id, submitter_name, cooperation_date, note_title, note_type_id,
+                SELECT id, submitter_name, cooperation_date, note_title, collaboration_note, note_type_id,
                        note_type_title, checked_count, total_count, checklist_snapshot, created_at
                 FROM submissions
                 ORDER BY id DESC
@@ -155,6 +161,7 @@ class ApiHandler(BaseHTTPRequestHandler):
                 "submitterName": row["submitter_name"],
                 "cooperationDate": row["cooperation_date"],
                 "noteTitle": row["note_title"],
+                "collaborationNote": row["collaboration_note"],
                 "noteType": {"id": row["note_type_id"], "title": row["note_type_title"]},
                 "checkedCount": row["checked_count"],
                 "totalCount": row["total_count"],
@@ -185,13 +192,13 @@ class ApiHandler(BaseHTTPRequestHandler):
             cursor = connection.execute(
                 """
                 INSERT INTO submissions (
-                  submitter_name, cooperation_date, note_title, note_type_id, note_type_title,
+                  submitter_name, cooperation_date, note_title, collaboration_note, note_type_id, note_type_title,
                   checked_count, total_count, checklist_snapshot, created_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     submission["submitter_name"], submission["cooperation_date"],
-                    submission["note_title"], submission["note_type_id"], submission["note_type_title"],
+                    submission["note_title"], submission["collaboration_note"], submission["note_type_id"], submission["note_type_title"],
                     checked_count, len(submission["checklist"]),
                     json.dumps(submission["checklist"], ensure_ascii=False), created_at,
                 ),

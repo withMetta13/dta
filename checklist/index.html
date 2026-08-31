@@ -887,6 +887,22 @@
       padding: 18px 20px; margin: 0 24px 24px; border: 1px solid rgba(72, 126, 102, .30);
       border-radius: var(--radius); background: #f3fbf5;
     }
+    .remarks-panel {
+      display: grid;
+      gap: 8px;
+      margin: 20px 24px 12px;
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fffdfa;
+    }
+    .remarks-panel label { font-size: 13px; font-weight: 800; }
+    .remarks-panel span { color: var(--muted); font-size: 12px; font-weight: 500; }
+    .remarks-panel textarea {
+      width: 100%; min-height: 76px; padding: 10px 11px; resize: vertical;
+      border: 1px solid var(--line); border-radius: 6px; background: #fff; color: var(--ink); outline: none;
+    }
+    .remarks-panel textarea:focus { border-color: rgba(72, 126, 102, .72); box-shadow: 0 0 0 3px rgba(72, 126, 102, .10); }
     .submit-panel strong { display: block; }
     .submit-panel span { color: #587066; font-size: 13px; }
     .submit-btn { min-height: 46px; padding: 10px 18px; border: 1px solid var(--green); border-radius: 6px; background: var(--green); color: #fff; cursor: pointer; font-weight: 800; }
@@ -919,6 +935,7 @@
     .history-details { display: grid; gap: 12px; padding: 0 18px 18px; }
     .history-section { overflow: hidden; border: 1px solid #eee5dc; border-radius: 6px; }
     .history-section h3 { margin: 0; padding: 10px 12px; background: #fffaf4; font-size: 14px; }
+    .history-note { padding: 12px; color: #504d57; font-size: 14px; line-height: 1.65; white-space: pre-wrap; }
     .history-items { margin: 0; padding: 0; list-style: none; }
     .history-item { position: relative; display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 9px; padding: 9px 12px; border-top: 1px solid #f2ebe4; font-size: 14px; }
     .history-item::before { content: ""; width: 16px; height: 16px; margin-top: 3px; border: 2px solid #d8c7b8; border-radius: 5px; }
@@ -931,6 +948,7 @@
       .form-intro, .submit-panel, .history-head { display: grid; grid-template-columns: 1fr; }
       .history-tools { width: 100%; }
       .history-mode-btn { flex: 1; }
+      .remarks-panel { margin: 16px 16px 10px; }
       .submit-panel { margin: 0 16px 16px; }
       .submit-btn { width: 100%; }
       .history-summary { grid-template-columns: 1fr; gap: 7px; }
@@ -1041,6 +1059,10 @@
             </div>
           </div>
           <div id="playbook" class="playbook"></div>
+          <div class="remarks-panel">
+            <label for="collaborationNote">合作问题备注 <span>（可选，记录与博主沟通、内容执行或其他需要跟进的问题）</span></label>
+            <textarea id="collaborationNote" name="collaborationNote" form="submissionForm" maxlength="800" placeholder="例如：博主场景不符合预期，已沟通补拍机场出行镜头。"></textarea>
+          </div>
           <div class="submit-panel">
             <div>
               <strong>确认后提交本次 Checklist</strong>
@@ -1308,6 +1330,7 @@
       submitterName: document.getElementById("submitterName"),
       cooperationDate: document.getElementById("cooperationDate"),
       noteTitle: document.getElementById("noteTitle"),
+      collaborationNote: document.getElementById("collaborationNote"),
       noteType: document.getElementById("noteType"),
       submitBtn: document.getElementById("submitBtn"),
       submitHint: document.getElementById("submitHint"),
@@ -1521,7 +1544,8 @@
       const grouped = groupBySection(entry.checklist);
       const detail = Object.entries(grouped).map(([section, items]) =>
         `<section class="history-section"><h3>${escapeHtml(section)}</h3><ul class="history-items">${items.map(item => `<li class="history-item ${item.checked ? "checked" : "unchecked"}">${escapeHtml(item.text)}</li>`).join("")}</ul></section>`).join("");
-      return `<article class="history-entry"><div class="history-summary"><div><h3 class="history-title">${escapeHtml(entry.noteTitle)}</h3><div class="history-meta">${escapeHtml(entry.submitterName)} · ${escapeHtml(entry.noteType.title)} · 合作日期 ${escapeHtml(entry.cooperationDate)}</div></div><div class="history-meta">提交于 ${escapeHtml(formatTimestamp(entry.createdAt))}</div><div class="history-progress">确认 ${entry.checkedCount}/${entry.totalCount}</div></div><details><summary>查看当时的 Checklist 明细</summary><div class="history-details">${detail}</div></details></article>`;
+      const note = entry.collaborationNote ? `<section class="history-section"><h3>合作问题备注</h3><div class="history-note">${escapeHtml(entry.collaborationNote)}</div></section>` : "";
+      return `<article class="history-entry"><div class="history-summary"><div><h3 class="history-title">${escapeHtml(entry.noteTitle)}</h3><div class="history-meta">${escapeHtml(entry.submitterName)} · ${escapeHtml(entry.noteType.title)} · 合作日期 ${escapeHtml(entry.cooperationDate)}</div></div><div class="history-meta">提交于 ${escapeHtml(formatTimestamp(entry.createdAt))}</div><div class="history-progress">确认 ${entry.checkedCount}/${entry.totalCount}</div></div><details><summary>查看当时的 Checklist 明细</summary><div class="history-details">${note}${detail}</div></details></article>`;
     }
 
     function renderHistory(submissions) {
@@ -1577,6 +1601,7 @@
         submitterName: els.submitterName.value,
         cooperationDate: els.cooperationDate.value,
         noteTitle: els.noteTitle.value.trim(),
+        collaborationNote: els.collaborationNote.value.trim(),
         noteType: { id: item.id, title: item.title },
         checklist: currentChecklist()
       };
@@ -1589,6 +1614,7 @@
         );
         localStorage.removeItem(draftKey(item.id));
         els.noteTitle.value = "";
+        els.collaborationNote.value = "";
         renderPlaybook(); updateProgress();
         showToast(`已提交记录 #${data.id} · ${formatTimestamp(data.createdAt)}`);
         loadHistory();

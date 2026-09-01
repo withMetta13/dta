@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """Local data plane and review UI for Xiaohongshu potential-note V1.
 
 The module is deliberately fail-closed:
@@ -31,6 +32,7 @@ CONFIG_PATH = ROOT / "config" / "v1.json"
 DB_PATH = ROOT / "data" / "potential_notes.sqlite3"
 ARTIFACTS = ROOT / "artifacts"
 SHARE_DIR = ARTIFACTS / "feishu-share" / "latest"
+LIBRARY_PUBLISHED = ARTIFACTS / "feishu-share" / "library-published.json"
 TZ = ZoneInfo("Asia/Shanghai")
 
 REVIEW_STATUSES = ("未审核", "继续观察", "加入模仿素材库", "淘汰")
@@ -940,40 +942,82 @@ def note_detail(db: sqlite3.Connection, nid: str) -> dict[str, Any] | None:
     return result
 
 
-def share_status() -> dict[str, Any]:
-    manifest_path = SHARE_DIR / "manifest.json"
-    if not manifest_path.is_file():
-        return {
-            "status": "尚未生成共享预览",
-            "record_count": 0,
-            "external_write": False,
-            "requires_confirmation": True,
-            "feishu_target": "尚未创建或绑定",
-        }
-    manifest = load_json(manifest_path)
+def weekly_overview(db: sqlite3.Connection) -> dict[str, Any]:
+    """Return the dashboard's only weekly view; no separate report is created."""
+    cutoff = iso(now() - dt.timedelta(days=7))
+    counts = db.execute(
+        """SELECT COUNT(*) AS total,
+        SUM(CASE WHEN pool='潜力预警' THEN 1 ELSE 0 END) AS potential,
+        SUM(CASE WHEN pool='高表现' THEN 1 ELSE 0 END) AS high,
+        SUM(CASE WHEN review_status='未审核' THEN 1 ELSE 0 END) AS pending,
+        SUM(CASE WHEN review_status='继续观察' THEN 1 ELSE 0 END) AS watching,
+        SUM(CASE WHEN review_status='加入模仿素材库' THEN 1 ELSE 0 END) AS selected
+        FROM notes WHERE last_seen_at>=?""",
+        (cutoff,),
+    ).fetchone()
+    runs = db.execute(
+        """SELECT COUNT(*) AS total,
+        SUM(CASE WHEN status IN ('completed','partial') THEN 1 ELSE 0 END) AS usable,
+        MAX(started_at) AS latest_at FROM runs WHERE started_at>=?""",
+        (cutoff,),
+    ).fetchone()
     return {
-        "status": "等待确认写入飞书" if manifest.get("requires_confirmation") else "已同步",
-        "record_count": int(manifest.get("record_count") or 0),
-        "field_count": int(manifest.get("field_count") or 0),
-        "generated_at": manifest.get("generated_at"),
-        "content_sha256": manifest.get("content_sha256"),
-        "external_write": bool(manifest.get("external_write")),
-        "requires_confirmation": bool(manifest.get("requires_confirmation", True)),
-        "feishu_target": manifest.get("feishu_target") or "尚未创建或绑定",
-        "weekly_report_url": "/share/weekly-report.md",
-        "bitable_preview_url": "/share/bitable-preview.json",
+        "days": 7,
+        "total": int(counts["total"] or 0),
+        "potential": int(counts["potential"] or 0),
+        "high": int(counts["high"] or 0),
+        "pending": int(counts["pending"] or 0),
+        "watching": int(counts["watching"] or 0),
+        "selected": int(counts["selected"] or 0),
+        "run_count": int(runs["total"] or 0),
+        "usable_run_count": int(runs["usable"] or 0),
+        "latest_run_at": runs["latest_at"],
     }
+
+
+def feishu_library_status(db: sqlite3.Connection) -> dict[str, Any]:
+    selected = int(db.execute("SELECT COUNT(*) FROM notes WHERE review_status='加入模仿素材库'").fetchone()[0])
+    manifest_path = SHARE_DIR / "manifest.json"
+    manifest = load_json(manifest_path) if manifest_path.is_file() else {}
+    if manifest.get("schema_version") != "xhs-inspiration-library-v2":
+        manifest = {}
+    published = load_json(LIBRARY_PUBLISHED) if LIBRARY_PUBLISHED.is_file() else {}
+    published_count = int(published.get("record_count") or 0)
+    target_url = str(published.get("base_url") or manifest.get("feishu_target") or "")
+    if not target_url.startswith(("https://", "http://")):
+        target_url = ""
+    if published.get("external_write"):
+        status = "精选库已同步" if published_count == selected else "有新的精选待同步"
+    elif selected:
+        status = "有精选记录待同步"
+    else:
+        status = "等待人工选入素材库"
+    return {
+        "status": status,
+        "selected_count": selected,
+        "preview_count": int(manifest.get("record_count") or 0),
+        "published_count": published_count,
+        "target_url": target_url or None,
+        "published_at": published.get("published_at"),
+        "selection_rule": "仅同步人工审核状态为“加入模仿素材库”的记录。",
+        "confirmation_required": True,
+        "legacy_share_retired": True,
+    }
+
+
+def dashboard_overview(db: sqlite3.Connection) -> dict[str, Any]:
+    return {"weekly": weekly_overview(db), "feishu": feishu_library_status(db)}
 
 
 DASHBOARD = r'''<!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>潜力笔记审核台</title><style>
-:root{--bg:#f5f6f8;--card:#fff;--text:#18202b;--muted:#667085;--line:#e5e7eb;--red:#e83e5b;--amber:#b86b00;--green:#177245;--blue:#3157b7}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif}
-header{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--line);padding:14px 24px;display:flex;justify-content:space-between;align-items:center}h1{font-size:20px;margin:0}main{max-width:1500px;margin:auto;padding:20px 24px}.summary,.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}.metric,.filters label{background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 12px}.metric b{font-size:20px;display:block}.filters select{border:0;background:transparent;min-width:110px;color:var(--text)}.notice{border-left:4px solid var(--amber);background:#fff8e8;padding:10px 12px;margin-bottom:14px;border-radius:6px}.share{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:14px;display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap}.share strong{display:block}.share a{color:var(--blue);margin-left:12px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(350px,1fr));gap:14px}.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;min-height:265px}.top{display:flex;gap:12px}.cover{width:104px;height:138px;object-fit:cover;background:#eef0f3;border-radius:8px}.cover.empty{display:flex;align-items:center;justify-content:center;color:var(--muted)}h2{font-size:16px;margin:0 0 5px;line-height:1.4}.muted{color:var(--muted)}.badges{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.badge{padding:2px 7px;border-radius:99px;background:#eef2ff;color:var(--blue);font-size:12px}.badge.high{background:#fff0f2;color:var(--red)}.badge.warn{background:#fff5df;color:var(--amber)}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:12px 0}.metrics div{background:#f8fafc;border-radius:7px;padding:7px}.metrics b{display:block;font-size:16px}.ai{border-top:1px solid var(--line);padding-top:10px;min-height:54px}.review{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.review button{border:1px solid var(--line);background:#fff;padding:6px 9px;border-radius:7px;cursor:pointer}.review button.active{background:#18202b;color:#fff}.detail{display:inline-block;margin-top:8px;color:var(--blue);text-decoration:none}.empty-state{background:#fff;padding:50px;text-align:center;border-radius:12px;color:var(--muted)}dialog{width:min(900px,92vw);border:0;border-radius:14px;padding:0;box-shadow:0 20px 70px #0004}dialog article{padding:22px}dialog::backdrop{background:#0007}.close{float:right;border:0;background:#eee;border-radius:7px;padding:7px 10px}.trend{width:100%;height:130px}.cats{display:grid;grid-template-columns:1fr auto;gap:5px 10px}.evidence{border-top:1px solid var(--line);margin-top:12px;padding-top:10px}
-@media(max-width:600px){main{padding:14px}.grid{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}}
-</style></head><body><header><div><h1>潜力笔记审核台</h1><span class="muted">审核状态保存在审核台数据库；飞书共享区用于查看已生成的周报和明细。</span></div><button onclick="load()">刷新</button></header>
-<main><div class="notice">“本次未发现推广证据”不等于自然流量；评论比例只代表本次成功读取的一级评论样本。</div><section id="share" class="share"></section><section id="summary" class="summary"></section>
+:root{--bg:#f7f3eb;--card:#fffdf9;--text:#292723;--muted:#726d65;--line:#ddd4c7;--accent:#b5533c;--amber:#9a651e;--green:#426650;--blue:#5b6272}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif}
+header{position:sticky;top:0;z-index:5;background:#fffdf9;border-bottom:1px solid var(--line);padding:18px 24px;display:flex;justify-content:space-between;align-items:center}h1{font-family:Georgia,"Songti SC",serif;font-size:24px;margin:0}header button{border:1px solid var(--line);background:transparent;color:var(--text);padding:7px 12px;cursor:pointer}main{max-width:1500px;margin:auto;padding:24px}.workflow{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:center;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:14px 0;margin-bottom:22px}.workflow b{color:var(--accent);display:block}.workflow span{text-align:center;color:var(--muted)}.section-head{display:flex;justify-content:space-between;align-items:end;margin:18px 0 8px}.section-head h2{font-family:Georgia,"Songti SC",serif;font-size:20px;margin:0}.summary,.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}.metric,.filters label{background:var(--card);border:1px solid var(--line);padding:9px 12px}.metric b{font-size:21px;display:block}.filters select{border:0;background:transparent;min-width:110px;color:var(--text)}.notice{border-left:3px solid var(--amber);background:#fff9ed;padding:10px 12px;margin-bottom:18px}.library{background:var(--card);border:1px solid var(--line);padding:14px;margin-bottom:22px;display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap}.library strong{display:block;font-size:16px}.library a{color:var(--accent)}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(350px,1fr));gap:12px}.card{background:var(--card);border:1px solid var(--line);padding:14px;min-height:265px}.top{display:flex;gap:12px}.cover{width:104px;height:138px;object-fit:cover;background:#eee8de}.cover.empty{display:flex;align-items:center;justify-content:center;color:var(--muted)}h2{font-size:16px;margin:0 0 5px;line-height:1.4}.muted{color:var(--muted)}.badges{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.badge{padding:2px 7px;background:#f0ede7;color:var(--blue);font-size:12px}.badge.high{background:#f8e9e5;color:var(--accent)}.badge.warn{background:#fbf0d9;color:var(--amber)}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;margin:12px 0;background:var(--line)}.metrics div{background:#faf7f1;padding:7px}.metrics b{display:block;font-size:16px}.ai{border-top:1px solid var(--line);padding-top:10px;min-height:54px}.review{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.review button{border:1px solid var(--line);background:transparent;padding:6px 9px;cursor:pointer}.review button.active{background:var(--accent);border-color:var(--accent);color:#fff}.detail{display:inline-block;margin-top:8px;color:var(--accent);text-decoration:none}.empty-state{background:var(--card);padding:50px;text-align:center;color:var(--muted)}dialog{width:min(900px,92vw);border:1px solid var(--line);padding:0;box-shadow:0 20px 70px #0003}dialog article{padding:22px}dialog::backdrop{background:#0007}.close{float:right;border:1px solid var(--line);background:#faf7f1;padding:7px 10px}.trend{width:100%;height:130px}.cats{display:grid;grid-template-columns:1fr auto;gap:5px 10px}.evidence{border-top:1px solid var(--line);margin-top:12px;padding-top:10px}
+@media(max-width:600px){main{padding:14px}.workflow{grid-template-columns:1fr}.workflow>span{display:none}.grid{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}}
+</style></head><body><header><div><h1>潜力笔记审核台</h1><span class="muted">唯一工作入口：在这里查看本周概览、筛选候选并完成人工审核。</span></div><button onclick="load()">刷新数据</button></header>
+<main><section class="workflow"><div><b>第一层 · 审核台</b>发现、分析、观察与四态审核</div><span>→</span><div><b>第二层 · 飞书精选库</b>只沉淀人工确认加入素材库的笔记</div></section><div class="notice">“本次未发现推广证据”不等于自然流量；评论比例只代表本次成功读取的一级评论样本。</div><section><div class="section-head"><h2>本周概览</h2><span class="muted">最近7天，实时取自审核台数据库</span></div><div id="summary" class="summary"></div></section><section id="feishu" class="library"></section>
 <section class="filters"><label>分池 <select id="pool"><option value="">全部</option><option>潜力预警</option><option>高表现</option></select></label><label>粉丝层级 <select id="fan_tier"><option value="">全部</option><option>低粉</option><option>中低粉</option><option>中粉</option><option>高粉</option><option>粉丝未知</option></select></label><label>推广状态 <select id="promotion"><option value="">全部</option><option>已发现推广证据</option><option>本次未发现推广证据</option><option>无法核验</option><option>待人工复核</option></select></label><label>审核状态 <select id="review"><option value="">全部</option><option>未审核</option><option>继续观察</option><option>加入模仿素材库</option><option>淘汰</option></select></label><label>关键词 <select id="keyword"><option value="">全部</option></select></label></section>
 <section id="grid" class="grid"></section></main><dialog id="dialog"><article><button class="close" onclick="dialog.close()">关闭</button><div id="detail"></div></article></dialog>
 <script>
@@ -981,7 +1025,7 @@ const states=['未审核','继续观察','加入模仿素材库','淘汰']; cons
 const fmt=n=>n==null?'未显示':Number(n).toLocaleString('zh-CN'); const pct=n=>n==null?'—':(Number(n)*100).toFixed(1)+'%';
 const endpoint=path=>path.replace(/^\//,'');
 async function init(){const c=await fetch(endpoint('api/config')).then(r=>r.json()); keyword.innerHTML='<option value="">全部</option>'+c.keywords.map(k=>`<option>${esc(k)}</option>`).join(''); document.querySelectorAll('select').forEach(s=>s.onchange=load); load()}
-async function load(){const q=new URLSearchParams({days:'7'}); ['pool','fan_tier','promotion','review','keyword'].forEach(k=>{const v=document.getElementById(k).value;if(v)q.set(k,v)});const [rows,s]=await Promise.all([fetch(endpoint('api/notes?')+q).then(r=>r.json()),fetch(endpoint('api/share')).then(r=>r.json())]);share.innerHTML=`<div><strong>飞书共享：${esc(s.status)}</strong><span class="muted">${fmt(s.record_count)}条明细 · 目标：${esc(s.feishu_target)}</span></div>${s.weekly_report_url?`<div><a href="${endpoint(s.weekly_report_url)}" target="_blank">查看周报</a><a href="${endpoint(s.bitable_preview_url)}" target="_blank">查看明细</a></div>`:''}`;summary.innerHTML=[['待审核',rows.filter(x=>x.review_status==='未审核').length],['潜力预警',rows.filter(x=>x.pool==='潜力预警').length],['高表现',rows.filter(x=>x.pool==='高表现').length],['已发现推广证据',rows.filter(x=>x.promotion_status==='已发现推广证据').length]].map(x=>`<div class="metric"><b>${x[1]}</b>${x[0]}</div>`).join('');grid.innerHTML=rows.length?rows.map(card).join(''):'<div class="empty-state">当前还没有成功入库的笔记。请先完成一次采集。</div>'}
+async function load(){const q=new URLSearchParams({days:'7'}); ['pool','fan_tier','promotion','review','keyword'].forEach(k=>{const v=document.getElementById(k).value;if(v)q.set(k,v)});const [rows,o]=await Promise.all([fetch(endpoint('api/notes?')+q).then(r=>r.json()),fetch(endpoint('api/overview')).then(r=>r.json())]);const w=o.weekly,f=o.feishu;summary.innerHTML=[['本周候选',w.total],['待审核',w.pending],['继续观察',w.watching],['高表现',w.high],['已选入素材库',w.selected],['有效采集',`${w.usable_run_count}/${w.run_count}`]].map(x=>`<div class="metric"><b>${x[1]}</b>${x[0]}</div>`).join('');document.getElementById('feishu').innerHTML=`<div><strong>飞书精选库 · ${esc(f.status)}</strong><span class="muted">审核台已选 ${fmt(f.selected_count)} 篇；飞书已同步 ${fmt(f.published_count)} 篇。${esc(f.selection_rule)}</span></div>${f.target_url?`<a href="${esc(f.target_url)}" target="_blank" rel="noreferrer">打开飞书精选库 →</a>`:'<span class="muted">首次选入素材后，再经确认创建精选库</span>'}`;grid.innerHTML=rows.length?rows.map(card).join(''):'<div class="empty-state">当前筛选条件下没有笔记。</div>'}
 function card(n){const cover=n.cover_path?`<img class="cover" src="${endpoint('media/'+encodeURIComponent(n.cover_path))}" alt="笔记封面">`:'<div class="cover empty">未缓存封面</div>';return `<article class="card"><div class="top">${cover}<div><h2>${esc(n.title||'无标题')}</h2><div class="muted">${esc(n.author_name||'作者未显示')} · ${esc(n.fan_tier)}</div><div class="badges"><span class="badge ${n.pool==='高表现'?'high':''}">${esc(n.pool)}</span><span class="badge ${n.promotion_status==='待人工复核'?'warn':''}">${esc(n.promotion_status)}</span></div><div class="muted">命中：${n.hit_keywords.map(esc).join('、')}</div></div></div><div class="metrics"><div><b>${fmt(n.latest_likes)}</b>点赞</div><div><b>${fmt(n.latest_collects)}</b>收藏</div><div><b>${fmt(n.latest_comments)}</b>评论</div><div><b>${pct(n.like_fan_ratio)}</b>赞粉比</div></div><div class="ai"><b>AI观察</b><div>${esc(n.ai_observation||'尚未完成分析')}</div></div><div class="review">${states.map(s=>`<button class="${n.review_status===s?'active':''}" onclick="setReview('${esc(n.note_id)}','${s}')">${s}</button>`).join('')}</div><a class="detail" href="#" onclick="showDetail('${esc(n.note_id)}');return false">查看数据变化与依据</a> · <a class="detail" href="${esc(n.note_url)}" target="_blank" rel="noreferrer">打开原笔记</a></article>`}
 async function setReview(id,status){await fetch(endpoint('api/review'),{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({note_id:id,status})});load()}
 async function showDetail(id){const n=await fetch(endpoint('api/note/')+encodeURIComponent(id)).then(r=>r.json());const points=n.snapshots||[];const max=Math.max(1,...points.map(x=>x.likes));const poly=points.map((x,i)=>`${20+i*Math.max(1,760/Math.max(1,points.length-1))},${115-x.likes/max*90}`).join(' ');const analysis=n.analysis;detail.innerHTML=`<h2>${esc(n.title)}</h2><p class="muted">${esc(n.author_name)} · ${esc(n.fan_tier)} · ${esc(n.pool)}</p><h3>点赞变化</h3><svg class="trend" viewBox="0 0 800 130"><polyline fill="none" stroke="#e83e5b" stroke-width="3" points="${poly}"/></svg><p>${points.map(x=>`${esc(x.captured_at.slice(0,10))}：${fmt(x.likes)}赞`).join('　')}</p><h3>评论样本观察</h3>${analysis?`<p>${esc(analysis.observation)}</p><div class="cats">${analysis.categories.map(c=>`<span>${esc(c.label)}</span><b>${pct(c.ratio)}（${fmt(c.count)}条）</b>`).join('')}</div><p>高频询问：${esc(analysis.frequent_element||'未识别')} ${pct(analysis.frequent_element_ratio)}；@朋友行为：${pct(analysis.at_friend_ratio)}</p><p class="muted">样本：${fmt(analysis.sampled_count)}条一级评论，${esc(analysis.sampling_method)}</p>`:'<p class="muted">尚无有效评论分析。</p>'}<div class="evidence"><h3>推广核验依据</h3>${(n.promotion_evidence||[]).length?n.promotion_evidence.map(e=>`<p><b>${esc(e.status)}</b> · ${esc(e.channel)}<br>${esc(e.reason)}</p>`).join(''):'<p class="muted">尚未核验。</p>'}</div>`;dialog.showModal()}
@@ -1014,8 +1058,8 @@ class Handler(BaseHTTPRequestHandler):
         with connect(self.db_path) as db:
             if parsed.path == "/api/config":
                 self.send_json({"keywords": [row[0] for row in db.execute("SELECT keyword FROM keywords WHERE enabled=1 ORDER BY rowid")]}); return
-            if parsed.path == "/api/share":
-                self.send_json(share_status()); return
+            if parsed.path == "/api/overview":
+                self.send_json(dashboard_overview(db)); return
             if parsed.path == "/api/notes":
                 self.send_json(list_notes(db, urllib.parse.parse_qs(parsed.query))); return
             if parsed.path.startswith("/api/note/"):
@@ -1027,15 +1071,6 @@ class Handler(BaseHTTPRequestHandler):
             if media_root not in candidate.parents or not candidate.is_file():
                 self.send_error(404); return
             data = candidate.read_bytes(); self.send_response(200); self.send_header("Content-Type", mimetypes.guess_type(candidate.name)[0] or "application/octet-stream"); self.send_header("Content-Length", str(len(data))); self.end_headers(); self.wfile.write(data); return
-        if parsed.path.startswith("/share/"):
-            name = parsed.path.removeprefix("/share/")
-            if name not in {"weekly-report.md", "bitable-preview.json"}:
-                self.send_error(404); return
-            candidate = SHARE_DIR / name
-            if not candidate.is_file():
-                self.send_error(404); return
-            data = candidate.read_bytes(); content_type = "text/markdown; charset=utf-8" if name.endswith(".md") else "application/json; charset=utf-8"
-            self.send_response(200); self.send_header("Content-Type", content_type); self.send_header("Content-Length", str(len(data))); self.send_header("Cache-Control", "no-store"); self.end_headers(); self.wfile.write(data); return
         self.send_error(404)
 
     def do_POST(self) -> None:  # noqa: N802

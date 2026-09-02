@@ -78,7 +78,7 @@ def validate_submission(payload: object) -> tuple[dict | None, str | None]:
     try:
         datetime.strptime(cooperation_date, "%Y-%m-%d")
     except (TypeError, ValueError):
-        return None, "请填写正确的合作日期。"
+        return None, "请填写正确的发布日期。"
     if not isinstance(note_type, dict):
         return None, "请选择笔记类型。"
 

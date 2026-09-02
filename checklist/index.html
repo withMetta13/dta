@@ -1019,7 +1019,7 @@
           </select>
         </div>
         <div class="field">
-          <label for="cooperationDate">合作日期 <span class="required">*</span></label>
+          <label for="cooperationDate">发布日期 <span class="required">*</span></label>
           <input id="cooperationDate" name="cooperationDate" type="date" required>
         </div>
         <div class="field">
@@ -1490,7 +1490,7 @@
       const detail = Object.entries(grouped).filter(([section]) => section !== "发布前确认").map(([section, items]) =>
         `<section class="history-section"><h3>${escapeHtml(section)}</h3><ul class="history-items">${items.map(item => `<li class="history-item ${item.checked ? "checked" : "unchecked"}">${escapeHtml(item.text)}</li>`).join("")}</ul></section>`).join("");
       const note = entry.collaborationNote ? `<section class="history-section"><h3>合作问题备注</h3><div class="history-note">${escapeHtml(entry.collaborationNote)}</div></section>` : "";
-      return `<article class="history-entry"><div class="history-summary"><div><h3 class="history-title">${escapeHtml(entry.noteTitle)}</h3><div class="history-meta">${escapeHtml(entry.submitterName)} · ${escapeHtml(entry.noteType.title)} · 合作日期 ${escapeHtml(entry.cooperationDate)}</div></div><div class="history-meta">提交于 ${escapeHtml(formatTimestamp(entry.createdAt))}</div><div class="history-progress">确认 ${entry.checkedCount}/${entry.totalCount}</div></div><details><summary>查看当时的 Checklist 明细</summary><div class="history-details">${note}${detail}</div></details></article>`;
+      return `<article class="history-entry"><div class="history-summary"><div><h3 class="history-title">${escapeHtml(entry.noteTitle)}</h3><div class="history-meta">${escapeHtml(entry.submitterName)} · ${escapeHtml(entry.noteType.title)} · 发布日期 ${escapeHtml(entry.cooperationDate)}</div></div><div class="history-meta">提交于 ${escapeHtml(formatTimestamp(entry.createdAt))}</div><div class="history-progress">确认 ${entry.checkedCount}/${entry.totalCount}</div></div><details><summary>查看当时的 Checklist 明细</summary><div class="history-details">${note}${detail}</div></details></article>`;
     }
 
     function renderHistory(submissions) {

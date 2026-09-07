@@ -613,6 +613,14 @@
       grid-column: 1 / -1;
     }
 
+    .section-card.global-confirm {
+      border-color: rgba(65, 108, 159, .34);
+    }
+
+    .section-card.global-confirm .section-title {
+      background: #f2f7ff;
+    }
+
     .section-title {
       display: flex;
       align-items: center;
@@ -1258,6 +1266,11 @@
       }
     ];
 
+    const GLOBAL_CHECKS = [
+      "光线是否符合第一优先级：箱子纹路清晰，避免偏暗、过曝、背光和明显色差。",
+      "关键词是否自然埋入标题、封面、正文或花字：出片、大容量、DTA 行李箱、DTA 腰果箱、旅行、高颜值、巨能装等。"
+    ];
+
     const API_URL = "api/submissions";
     const HISTORY_MODE_STORAGE_KEY = "dta-xhs-history-mode";
     const TEAM_MEMBERS = ["小鱼", "勤天", "浅浅"];
@@ -1341,7 +1354,7 @@
         <button type="button" class="${item.id === state.activeId ? "active" : ""}" data-id="${item.id}">
           <span class="nav-icon" aria-hidden="true"><i data-lucide="${escapeHtml(item.icon)}"></i></span>
           <span><span class="nav-title">${highlight(item.title)}</span><span class="nav-sub">${highlight(item.tags.slice(0, 2).join(" / "))}</span></span>
-          <span class="nav-count">${item.optimize.length + item.avoid.length}</span>
+          <span class="nav-count">${GLOBAL_CHECKS.length + item.optimize.length + item.avoid.length}</span>
         </button>`).join("");
 
       if (!visible.some(item => item.id === state.activeId) && visible[0]) {
@@ -1377,7 +1390,7 @@
 
     function toggleSection(section) {
       const item = activePlaybook();
-      const items = item[section] || [];
+      const items = section === "global" ? GLOBAL_CHECKS : item[section] || [];
       const checked = getChecked(item.id);
       const allChecked = items.length > 0 && items.every((_, index) => checked.has(`${section}-${index}`));
       items.forEach((_, index) => {
@@ -1395,6 +1408,7 @@
         <div class="playbook-head"><div><h2>${highlight(item.title)}</h2><p class="subtitle">${highlight(item.sub)}</p></div><div class="fit-box"><b>适合合作</b><span>${highlight(item.fit)}</span></div></div>
         <div class="chips">${item.tags.map(tag => `<span class="chip">${highlight(tag)}</span>`).join("")}</div>
         <div class="section-grid">
+          <article class="section-card global-confirm full">${sectionTitle("global", "全局重点确认", GLOBAL_CHECKS)}${itemList("global", GLOBAL_CHECKS)}</article>
           <article class="section-card">${sectionTitle("optimize", "内容优化点", item.optimize)}${itemList("optimize", item.optimize)}</article>
           <article class="section-card avoid">${sectionTitle("avoid", "内容避雷点", item.avoid)}${itemList("avoid", item.avoid)}</article>
         </div>`;
@@ -1414,6 +1428,7 @@
       const item = activePlaybook();
       const checked = getChecked(item.id);
       return [
+        ...GLOBAL_CHECKS.map((text, index) => ({ section: "全局重点确认", text, checked: checked.has(`global-${index}`) })),
         ...item.optimize.map((text, index) => ({ section: "内容优化点", text, checked: checked.has(`optimize-${index}`) })),
         ...item.avoid.map((text, index) => ({ section: "内容避雷点", text, checked: checked.has(`avoid-${index}`) }))
       ];
@@ -1432,7 +1447,7 @@
 
     function copyCurrent() {
       const item = activePlaybook();
-      const lines = [`【${item.title}】小红书报备笔记 Checklist`, "", `适合合作：${item.fit}`, `关键词：${item.tags.join(" / ")}`, "", "内容优化点：", ...item.optimize.map((text, index) => `${index + 1}. ${text}`), "", "内容避雷点：", ...(item.avoid.length ? item.avoid.map((text, index) => `${index + 1}. ${text}`) : ["暂无专属避雷，执行全局避雷。"])];
+      const lines = [`【${item.title}】小红书报备笔记 Checklist`, "", `适合合作：${item.fit}`, `关键词：${item.tags.join(" / ")}`, "", "全局重点确认：", ...GLOBAL_CHECKS.map((text, index) => `${index + 1}. ${text}`), "", "内容优化点：", ...item.optimize.map((text, index) => `${index + 1}. ${text}`), "", "内容避雷点：", ...(item.avoid.length ? item.avoid.map((text, index) => `${index + 1}. ${text}`) : ["暂无专属避雷，执行全局避雷。"])];
       copyText(lines.join("\n")).then(() => showToast("已复制当前清单"), () => showToast("复制失败，可手动选择页面文字"));
     }
 

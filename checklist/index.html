@@ -613,13 +613,14 @@
       grid-column: 1 / -1;
     }
 
-    .section-card.global-confirm {
-      border-color: rgba(65, 108, 159, .34);
-    }
-
-    .section-card.global-confirm .section-title {
-      background: #f2f7ff;
-    }
+    .section-card.must { border-color: rgba(72, 126, 102, .34); }
+    .section-card.must .section-title { background: #f3fbf5; }
+    .section-card.must .section-title h3 { color: var(--green); }
+    .section-card.should .section-title { background: #fffaf0; }
+    .section-card.should .section-title h3 { color: #9a6a22; }
+    .section-card.notes { border-color: rgba(221, 77, 92, .24); }
+    .section-card.notes .section-title { background: #fff4f5; }
+    .section-card.notes .section-title h3 { color: var(--rose); }
 
     .section-title {
       display: flex;
@@ -709,21 +710,9 @@
       text-decoration-thickness: 1px;
     }
 
-    .avoid .section-title {
-      background: #fff4f5;
-    }
-
-    .avoid .section-title h3 {
-      color: var(--rose);
-    }
-
-    .check .section-title {
-      background: #f2f8ff;
-    }
-
-    .check .section-title h3 {
-      color: var(--blue);
-    }
+    .note-items { margin: 0; padding: 0; list-style: none; }
+    .note-item { padding: 13px 16px; border-bottom: 1px solid #f0e8df; color: #665b61; line-height: 1.6; }
+    .note-item:last-child { border-bottom: 0; }
 
     mark {
       padding: 1px 4px;
@@ -974,8 +963,8 @@
         <p class="lead">选择笔记类型后，团队可以直接查看对应的内容优化点和合作避雷点。重点围绕行李箱的颜值、出片、容量、场景真实感和光线质感。</p>
         <div class="hero-metrics" aria-label="清单概览">
           <div class="metric"><strong>7</strong><span>种笔记类型</span></div>
-          <div class="metric"><strong>51</strong><span>条优化经验</span></div>
-          <div class="metric"><strong>22</strong><span>条避雷提醒</span></div>
+          <div class="metric"><strong>57</strong><span>条可勾选重点</span></div>
+          <div class="metric"><strong>28</strong><span>条注意事项</span></div>
         </div>
       </div>
       <div class="visual-panel" aria-hidden="true">
@@ -1266,10 +1255,152 @@
       }
     ];
 
-    const GLOBAL_CHECKS = [
-      "光线是否符合第一优先级：箱子纹路清晰，避免偏暗、过曝、背光和明显色差。",
-      "关键词是否自然埋入标题、封面、正文或花字：出片、大容量、DTA 行李箱、DTA 腰果箱、旅行、高颜值、巨能装等。"
-    ];
+    const LIGHTING_REQUIREMENT = "拍摄光线保持明亮稳定，行李箱纹路清晰有质感，避免偏暗、过曝、背光和明显色差。";
+
+    const PRIORITY_CONTENT = {
+      talking: {
+        must: [
+          LIGHTING_REQUIREMENT,
+          "开头前 5 秒抛出一句痛点，用有冲击力的语气配合音效和特效。",
+          "前 5 秒后交代人群、地域、用途中的至少两项，再讲出片、巨能装等核心卖点。",
+          "口播保持真实、有情绪起伏，卖点自然植入，视频全程用音效增强节奏。",
+          "标题设置钩子并强定位人群。",
+          "文案完整埋入出片、大容量、dta、腰果箱四个关键词。",
+          "大字报封面使用与主题强相关的痛点花字。"
+        ],
+        should: [
+          "视频呈现与主题对应的真实场景：开学主题使用宿舍或学校，旅行主题使用高铁或机场。",
+          "拍摄场景保持简约高级，避开花花绿绿的公园或小区。",
+          "讲到行李箱很出片时，插入其他博主优质图或达人自身优质素材图。",
+          "前 5 秒使用达人本人真实、有情绪的声音配合音效，尽量不用剪辑软件配音。"
+        ],
+        notes: [
+          "达人主页口播偏平淡时，只围绕颜值、容量、轮子三个核心卖点讲解，并加强音效。",
+          "优先合作口播表达有吸引力的达人，避免口播过于平淡的账号。",
+          "日常 vlog 类型账号适合尝试合作口播。",
+          "前 5 秒不要使用切片画面，硬广类笔记必须保留痛点。",
+          "大字报封面避免没有痛点或没有钩子的普通描述。",
+          "避免合作近期更新频率低的账号。"
+        ]
+      },
+      review: {
+        must: [
+          LIGHTING_REQUIREMENT,
+          "开头前 5 秒抛出一句行李箱选购痛点，用有冲击力的语气配合音效和特效。",
+          "开头前 5 秒先用远景运镜展示多个箱子，再呈现真人拿着行李箱的测评画面；非必要不使用 AI 画面或插图。",
+          "口播讲解保持真实、有情绪起伏，产品卖点自然植入。",
+          "视频全程加入音效、特效、配音和产品对比图。",
+          "标题具备钩子和利他性，并包含行李箱测评相关关键词。",
+          "文案完整埋入出片、大容量、dta、腰果箱、行李箱测评五个关键词。",
+          "封面展示多个箱子，花字模仿爆文笔记，用明确且利他的痛点表达。"
+        ],
+        should: [],
+        notes: [
+          "在 618、双 11 或行李箱旺季前 2 个月集中合作横测，并在节点前半个月内发完笔记。",
+          "避免全程人物贴脸讲解，保留真实拿箱测评和上手对比画面。"
+        ]
+      },
+      "outfit-image": {
+        must: [
+          LIGHTING_REQUIREMENT,
+          "画面呈现机场或高铁等明确出行场景，以及托特包、证件、护照、钱包等出行物品。",
+          "标题围绕出行相关主题。",
+          "文案完整埋入出片、大容量、dta、腰果箱四个关键词。",
+          "封面展示明确的出行场景。"
+        ],
+        should: [
+          "穿搭或出行物品与行李箱形成同色系搭配。",
+          "画面使用适配行李箱的多巴胺色彩。"
+        ],
+        notes: [
+          "达人身高与箱子尺寸保持适配。",
+          "避免在咖啡厅、马路边、公园、小区等弱出行感场景拍摄。",
+          "主页光线偏暗、无法拍出箱子质感的账号不合作。",
+          "主页穿搭过于随意、无法适配产品调性的账号不合作。"
+        ]
+      },
+      "outfit-video": {
+        must: [
+          LIGHTING_REQUIREMENT,
+          "画面呈现机场、高铁或国外等明确出行场景，以及托特包、证件、护照、钱包等出行物品。",
+          "标题围绕出行相关主题。",
+          "文案完整埋入出片、大容量、dta、腰果箱四个关键词。",
+          "封面展示明确的出行场景。"
+        ],
+        should: [
+          "视频花字、穿搭和出行物品与行李箱形成同色系搭配。"
+        ],
+        notes: [
+          "达人身高与箱子尺寸保持适配。",
+          "主页风格偏多巴胺的达人更适合芭比粉、荧光绿等高饱和颜色。",
+          "避免在咖啡厅、马路边、公园、小区等弱出行感场景拍摄。",
+          "主页光线偏暗、无法拍出箱子质感的账号不合作。",
+          "主页穿搭过于随意、无法适配产品调性的账号不合作。"
+        ]
+      },
+      "home-storage": {
+        must: [
+          LIGHTING_REQUIREMENT,
+          "开头前 5 秒花字交代人群、地域、用途，例如 P 人沉浸式收纳 7 天 6 晚新疆之旅。",
+          "整条视频加入白噪音，收纳节奏紧凑，剪掉多余小动作。",
+          "视频介绍颜值、大容量等核心卖点，花字保持高级克制。",
+          "标题交代人群、地域、用途中的至少两项。",
+          "文案完整埋入颜值、出片、大容量、dta、腰果箱五个关键词。",
+          "封面拍出行李箱质感，物品数量适中且同色系，并出现匹配账号类型的宠物、明星周边或 IP 物品。"
+        ],
+        should: [
+          "中间收纳与行李箱同色系的出行相关物品。",
+          "使用小红书收纳类爆款 BGM。"
+        ],
+        notes: [
+          "人群使用 J 人、P 人、大学生、精致女生等明确主题；地域选择新疆、云南、大理、赛里木湖等出圈目的地；用途与箱子尺寸匹配。",
+          "大尺寸箱子对应 7 天 6 晚或 10 天 9 晚等长天数；宠物、追星、强 IP 账号的封面出现对应元素。",
+          "优先选择 3 千粉以上的账号，避免家里光线差的账号。",
+          "避免主页为 plog、评论区互暖的账号；平均点赞 500+ 可另行评估。",
+          "花字保持简约高级，封面其他物品不抢行李箱；行李箱不平铺，收纳袋和物品不杂乱。",
+          "视频节奏不要过快，保持符合小红书收纳内容的观看节奏。"
+        ]
+      },
+      vlog: {
+        must: [
+          LIGHTING_REQUIREMENT,
+          "视频以出行为主题，持续出现行李箱并贯穿全程。",
+          "标题围绕出行相关主题。",
+          "文案完整埋入出片、大容量、dta、腰果箱四个关键词。",
+          "封面用明亮光线拍出行李箱质感。"
+        ],
+        should: [
+          "去掉开头切片，正文开始前 10 秒交代人群、地域、用途，再讲出片、巨能装等核心卖点。",
+          "讲到行李箱很出片时，插入其他博主优质图或达人自身优质素材图。"
+        ],
+        notes: []
+      },
+      "bedroom-storage": {
+        must: [
+          LIGHTING_REQUIREMENT,
+          "开头前 3-5 秒展示吸引人的卧室亮点，例如精致装修或大量 IP 玩偶。",
+          "开头前 5 秒花字交代人群、地域、用途，例如 P 人沉浸式收纳 7 天 6 晚新疆之旅。",
+          "视频介绍颜值、大容量等核心卖点。",
+          "行李箱以板正、好看的角度拍摄。",
+          "标题交代人群、地域、用途中的至少两项。",
+          "文案完整埋入颜值、出片、大容量、dta、腰果箱五个关键词。",
+          "封面用明亮光线拍出行李箱质感。"
+        ],
+        should: [
+          "行李箱颜色与卧室保持同色系。",
+          "收纳节奏和画面保持整洁有序。"
+        ],
+        notes: [
+          "产品与卧室非同色系或出稿质量堪忧时，封面以卧室为主，行李箱露出一角。",
+          "卧室光线差的账号不合作；能明确避免背光或数据非常优秀时可评估。",
+          "数据差的账号不合作。",
+          "内容遵循主页调性，避免拍成硬广。",
+          "避免过多切换场景、角度、收纳顺序或光线，以免造成色差。"
+        ]
+      }
+    };
+
+    playbooks.forEach(item => Object.assign(item, PRIORITY_CONTENT[item.id]));
 
     const API_URL = "api/submissions";
     const HISTORY_MODE_STORAGE_KEY = "dta-xhs-history-mode";
@@ -1339,7 +1470,7 @@
     function matchesQuery(item) {
       const q = state.query.trim().toLowerCase();
       if (!q) return true;
-      return [item.title, item.sub, item.fit, ...item.tags, ...item.optimize, ...item.avoid, ...item.checks]
+      return [item.title, item.sub, item.fit, ...item.tags, ...item.must, ...item.should, ...item.notes]
         .join(" ").toLowerCase().includes(q);
     }
 
@@ -1354,7 +1485,7 @@
         <button type="button" class="${item.id === state.activeId ? "active" : ""}" data-id="${item.id}">
           <span class="nav-icon" aria-hidden="true"><i data-lucide="${escapeHtml(item.icon)}"></i></span>
           <span><span class="nav-title">${highlight(item.title)}</span><span class="nav-sub">${highlight(item.tags.slice(0, 2).join(" / "))}</span></span>
-          <span class="nav-count">${GLOBAL_CHECKS.length + item.optimize.length + item.avoid.length}</span>
+          <span class="nav-count">${item.must.length + item.should.length + item.notes.length}</span>
         </button>`).join("");
 
       if (!visible.some(item => item.id === state.activeId) && visible[0]) {
@@ -1373,14 +1504,14 @@
       window.lucide?.createIcons();
     }
 
-    function sectionTitle(section, title, items) {
+    function sectionTitle(section, title, items, checkable = true) {
       const checked = getChecked(state.activeId);
       const allChecked = items.length > 0 && items.every((_, index) => checked.has(`${section}-${index}`));
-      return `<div class="section-title"><div class="section-heading"><h3>${title}</h3><span>${items.length} 项</span></div>${items.length ? `<div class="section-actions"><button type="button" class="section-select-btn" data-select-section="${section}">${allChecked ? "取消全选" : "全选"}</button></div>` : ""}</div>`;
+      return `<div class="section-title"><div class="section-heading"><h3>${title}</h3><span>${items.length} 项</span></div>${checkable && items.length ? `<div class="section-actions"><button type="button" class="section-select-btn" data-select-section="${section}">${allChecked ? "取消全选" : "全选"}</button></div>` : ""}</div>`;
     }
 
     function itemList(section, items) {
-      if (!items.length) return `<div class="empty">这一类目前没有单独避雷项，执行全局避雷：光线、真实场景、关键词、节奏和色差。</div>`;
+      if (!items.length) return `<div class="empty">本类暂无需要勾选的额外内容。</div>`;
       const checked = getChecked(state.activeId);
       return `<ul class="items">${items.map((text, index) => {
         const key = `${section}-${index}`;
@@ -1388,9 +1519,14 @@
       }).join("")}</ul>`;
     }
 
+    function noteList(items) {
+      if (!items.length) return `<div class="empty">本类暂无额外注意事项。</div>`;
+      return `<ul class="note-items">${items.map(text => `<li class="note-item">${highlight(text)}</li>`).join("")}</ul>`;
+    }
+
     function toggleSection(section) {
       const item = activePlaybook();
-      const items = section === "global" ? GLOBAL_CHECKS : item[section] || [];
+      const items = item[section] || [];
       const checked = getChecked(item.id);
       const allChecked = items.length > 0 && items.every((_, index) => checked.has(`${section}-${index}`));
       items.forEach((_, index) => {
@@ -1408,9 +1544,9 @@
         <div class="playbook-head"><div><h2>${highlight(item.title)}</h2><p class="subtitle">${highlight(item.sub)}</p></div><div class="fit-box"><b>适合合作</b><span>${highlight(item.fit)}</span></div></div>
         <div class="chips">${item.tags.map(tag => `<span class="chip">${highlight(tag)}</span>`).join("")}</div>
         <div class="section-grid">
-          <article class="section-card global-confirm full">${sectionTitle("global", "全局重点确认", GLOBAL_CHECKS)}${itemList("global", GLOBAL_CHECKS)}</article>
-          <article class="section-card">${sectionTitle("optimize", "内容优化点", item.optimize)}${itemList("optimize", item.optimize)}</article>
-          <article class="section-card avoid">${sectionTitle("avoid", "内容避雷点", item.avoid)}${itemList("avoid", item.avoid)}</article>
+          <article class="section-card must">${sectionTitle("must", "必须做到的点", item.must)}${itemList("must", item.must)}</article>
+          <article class="section-card should">${sectionTitle("should", "尽量做到的点", item.should)}${itemList("should", item.should)}</article>
+          <article class="section-card notes full">${sectionTitle("notes", "千万要注意的事项", item.notes, false)}${noteList(item.notes)}</article>
         </div>`;
       els.playbook.querySelectorAll("input[type='checkbox']").forEach(box => box.addEventListener("change", () => {
         const checked = getChecked(state.activeId);
@@ -1428,9 +1564,8 @@
       const item = activePlaybook();
       const checked = getChecked(item.id);
       return [
-        ...GLOBAL_CHECKS.map((text, index) => ({ section: "全局重点确认", text, checked: checked.has(`global-${index}`) })),
-        ...item.optimize.map((text, index) => ({ section: "内容优化点", text, checked: checked.has(`optimize-${index}`) })),
-        ...item.avoid.map((text, index) => ({ section: "内容避雷点", text, checked: checked.has(`avoid-${index}`) }))
+        ...item.must.map((text, index) => ({ section: "必须做到的点", text, checked: checked.has(`must-${index}`) })),
+        ...item.should.map((text, index) => ({ section: "尽量做到的点", text, checked: checked.has(`should-${index}`) }))
       ];
     }
 
@@ -1445,10 +1580,23 @@
       els.submitHint.textContent = checked === total ? "已确认全部要点，可提交正式记录。" : `当前已确认 ${checked}/${total} 项；未勾选项也会如实记录。`;
     }
 
-    function copyCurrent() {
+    function copyCurrentLegacy() {
+      return copyCurrent();
       const item = activePlaybook();
       const lines = [`【${item.title}】小红书报备笔记 Checklist`, "", `适合合作：${item.fit}`, `关键词：${item.tags.join(" / ")}`, "", "全局重点确认：", ...GLOBAL_CHECKS.map((text, index) => `${index + 1}. ${text}`), "", "内容优化点：", ...item.optimize.map((text, index) => `${index + 1}. ${text}`), "", "内容避雷点：", ...(item.avoid.length ? item.avoid.map((text, index) => `${index + 1}. ${text}`) : ["暂无专属避雷，执行全局避雷。"])];
       copyText(lines.join("\n")).then(() => showToast("已复制当前清单"), () => showToast("复制失败，可手动选择页面文字"));
+    }
+
+    function copyCurrent() {
+      const item = activePlaybook();
+      const numbered = items => items.map((text, index) => `${index + 1}. ${text}`);
+      const lines = [
+        `【${item.title}】小红书报备笔记 Checklist`, "", `适合合作：${item.fit}`, `关键词：${item.tags.join(" / ")}`,
+        "", "必须做到的点：", ...numbered(item.must),
+        "", "尽量做到的点：", ...(item.should.length ? numbered(item.should) : ["暂无额外要求。"]),
+        "", "千万要注意的事项：", ...(item.notes.length ? numbered(item.notes) : ["暂无额外注意事项。"])
+      ];
+      copyText(lines.join("\\n")).then(() => showToast("已复制当前清单"), () => showToast("复制失败，可手动选择页面文字"));
     }
 
     function copyText(text) {

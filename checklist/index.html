@@ -962,9 +962,9 @@
         <h1 id="page-title">DTA 小红书合作笔记 Checklist</h1>
         <p class="lead">选择笔记类型后，团队可以直接查看对应的内容优化点和合作避雷点。重点围绕行李箱的颜值、出片、容量、场景真实感和光线质感。</p>
         <div class="hero-metrics" aria-label="清单概览">
-          <div class="metric"><strong>7</strong><span>种笔记类型</span></div>
-          <div class="metric"><strong>57</strong><span>条可勾选重点</span></div>
-          <div class="metric"><strong>28</strong><span>条注意事项</span></div>
+          <div class="metric"><strong id="typeMetric">9</strong><span>种笔记类型</span></div>
+          <div class="metric"><strong id="checkMetric">73</strong><span>条可勾选重点</span></div>
+          <div class="metric"><strong id="noteMetric">34</strong><span>条注意事项</span></div>
         </div>
       </div>
       <div class="visual-panel" aria-hidden="true">
@@ -1251,6 +1251,26 @@
           "画面不要切太杂，包括场景、角度、收纳顺序等。",
           "不要太多不同光线的画面拍摄，会影响箱子的色差。"
         ]
+      },
+      {
+        id: "wedding-image",
+        title: "备婚图文",
+        sub: "用真实的陪嫁收纳视角呈现结婚箱，让画面既有备婚氛围，也有明确的实用价值。",
+        icon: "heart-handshake",
+        fit: "备婚、陪嫁、婚房布置、结婚好物等具备真实婚嫁场景的图文账号。",
+        tags: ["陪嫁清单", "结婚箱", "真实物品", "利他标题", "高级花字"],
+        optimize: [],
+        avoid: []
+      },
+      {
+        id: "wedding-talking",
+        title: "备婚口播",
+        sub: "用真实婚嫁场景和有情绪的讲解，带出结婚箱的颜值与大容量。",
+        icon: "messages-square",
+        fit: "备婚、陪嫁、婚房布置、结婚好物等具备真实婚嫁场景的口播账号。",
+        tags: ["前5秒痛点", "结婚箱", "陪嫁箱", "真实口播", "高级花字"],
+        optimize: [],
+        avoid: []
       }
     ];
 
@@ -1345,14 +1365,15 @@
           "视频内容需重点输出两大核心卖点：颜值、大容量；花字风格要求高级质感，拒绝随意、廉价的字体效果。",
           "标题交代人群、地域、用途中的至少两项。",
           "文案完整埋入颜值、出片、大容量、dta、腰果箱五个关键词。",
-          "封面拍出行李箱质感，物品数量适中且同色系，并与账号人群匹配。"
+          "封面拍出行李箱质感，物品数量适中且同色系；宠物账号出现宠物，追星账号出现明星周边。"
         ],
         should: [
           "中间收纳与行李箱同色系的出行相关物品。",
           "使用小红书收纳类爆款 BGM。"
         ],
         notes: [
-          "人群使用 J 人、P 人、大学生、精致女生等明确主题；地域选择新疆、云南、大理、赛里木湖等出圈目的地；用途与箱子尺寸匹配。",
+          "人群使用 J 人、P 人、大学生、精致女生等明确主题；地域选择新疆、云南、大理、赛里木湖等出圈目的地；用途为出行天数，且与箱子尺寸匹配。",
+          "大尺寸箱子对应 7 天 6 晚或 10 天 9 晚等长天数；宠物、追星、强 IP 账号的封面出现对应的宠物、明星周边或 IP 元素。",
           "优先选择 3 千粉以上的账号，避免家里光线差的账号。",
           "避免主页为 plog、评论区互暖的账号；平均点赞 500+ 可另行评估。",
           "花字保持简约高级，封面其他物品不抢行李箱；行李箱不平铺，收纳袋和物品不杂乱。",
@@ -1395,6 +1416,46 @@
           "内容遵循主页调性，避免拍成硬广。",
           "避免过多切换场景、角度、收纳顺序或光线，以免造成色差。"
         ]
+      },
+      "wedding-image": {
+        must: [
+          LIGHTING_REQUIREMENT,
+          "首图展示行李箱与多种实际会装入陪嫁箱的物品。",
+          "首图也可使用纯行李箱展示，并搭配痛点花字卖点。",
+          "拍摄环境呈现婚嫁或备婚场景装饰。",
+          "标题具备利他性，并与内容主题匹配。",
+          "文案完整埋入 dta、颜值、大容量、结婚箱、陪嫁箱五个关键词。",
+          "封面加入痛点花字，并使用高级简约的字体。"
+        ],
+        should: [
+          "第二张图展示陪嫁清单，带动用户继续浏览。",
+          "行李箱以板正、好看的角度拍摄。"
+        ],
+        notes: [
+          "陪嫁物品以实际会装入箱内的物品为准，用真实备婚视角呈现，避免为了氛围随意堆放。",
+          "主题与利他性强相关，例如陪嫁清单、陪嫁箱里装什么；避免做没有实际价值的陪嫁箱科普。"
+        ]
+      },
+      "wedding-talking": {
+        must: [
+          LIGHTING_REQUIREMENT,
+          "开头前 5 秒抛出一句痛点，用有冲击力的语气配合音效和特效。",
+          "每个讲解卖点都使用对应画面呈现。",
+          "拍摄环境呈现婚嫁或备婚场景装饰。",
+          "标题具备利他性，并与内容主题匹配。",
+          "文案完整埋入 dta、颜值、大容量、结婚箱、陪嫁箱五个关键词。",
+          "封面加入痛点花字，并使用高级简约的字体。"
+        ],
+        should: [
+          "口播保持真实、有情绪起伏，卖点自然植入，视频全程用音效增强节奏。",
+          "行李箱以板正、好看的角度拍摄。"
+        ],
+        notes: [
+          "主题与利他性强相关，例如陪嫁清单、陪嫁箱里装什么；避免做没有实际价值的陪嫁箱科普。",
+          "避免过多使用 AI 图片，保留真实感的画面素材。",
+          "封面中行李箱至少露出一半，并完整呈现腰带。",
+          "达人主页口播偏平淡时，只围绕颜值、容量、轮子三个核心卖点讲解，并加强音效。"
+        ]
       }
     };
 
@@ -1429,6 +1490,9 @@
       historyViewBtn: document.getElementById("historyViewBtn"),
       historyList: document.getElementById("historyList"),
       historyCount: document.getElementById("historyCount"),
+      typeMetric: document.getElementById("typeMetric"),
+      checkMetric: document.getElementById("checkMetric"),
+      noteMetric: document.getElementById("noteMetric"),
       historyModeButtons: document.querySelectorAll("[data-history-mode]")
     };
 
@@ -1475,6 +1539,14 @@
     function populateTypeSelect() {
       els.noteType.innerHTML = playbooks.map(item => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.title)}</option>`).join("");
       els.noteType.value = state.activeId;
+    }
+
+    function updateHeroMetrics() {
+      const checkableCount = playbooks.reduce((total, item) => total + item.must.length + item.should.length, 0);
+      const noteCount = playbooks.reduce((total, item) => total + item.notes.length, 0);
+      els.typeMetric.textContent = String(playbooks.length);
+      els.checkMetric.textContent = String(checkableCount);
+      els.noteMetric.textContent = String(noteCount);
     }
 
     function renderNav() {
@@ -1749,6 +1821,7 @@
     els.cooperationDate.value = new Date().toISOString().slice(0, 10);
     setHistoryMode(state.historyMode);
     populateTypeSelect();
+    updateHeroMetrics();
     render();
     loadHistory();
 
